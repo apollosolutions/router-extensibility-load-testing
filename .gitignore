@@ -1,0 +1,46 @@
+# basic
+.env
+.DS_Store
+
+# go
+coprocessor
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+node_modules/
+*.tsbuildinfo
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# rust
+
+debug/
+target/
+**/*.rs.bk
+*.pdb

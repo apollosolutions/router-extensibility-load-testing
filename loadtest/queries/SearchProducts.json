@@ -1,0 +1,9 @@
+{
+  "query": "query SearchProducts($searchInput: ProductSearchInput!) {\n  searchProducts(searchInput: $searchInput) {\n    reviews {\n      author\n      body\n      id\n    }\n    mediaUrl\n    upc\n    title\n  }\n}\n",
+  "variables": {
+    "searchInput": {
+      "titleStartsWith": ""
+    }
+  },
+  "operationName": "SearchProducts"
+}

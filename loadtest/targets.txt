@@ -1,0 +1,9 @@
+POST http://localhost:4040/
+@queries/SearchProducts.json
+
+POST http://localhost:4040/
+@queries/SearchVariants.json
+
+POST http://localhost:4040/
+x-user-id: user:1
+@queries/User.json
