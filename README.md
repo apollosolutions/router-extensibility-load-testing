@@ -34,6 +34,7 @@ You will need to have installed:
 
 * [Vegeta](https://github.com/tsenart/vegeta)
 * [Task (for Taskfile support)](https://github.com/go-task/task)
+* [A copy of the Retail Supergraph demo and it running](https://github.com/apollosolutions/retail-supergraph)
 
 Both can be installed by `brew`.
 

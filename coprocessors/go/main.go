@@ -161,8 +161,8 @@ func client_awareness(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload.Headers["apollo-client-name"] = []string{claims.ClientName}
-	payload.Headers["apollo-client-version"] = []string{claims.ClientVersion}
+	payload.Headers["apollographql-client-name"] = []string{claims.ClientName}
+	payload.Headers["apollographql-client-version"] = []string{claims.ClientVersion}
 	responseBody, err := json.Marshal(&payload)
 	if err != nil {
 		panic(err)
