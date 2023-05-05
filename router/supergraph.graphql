@@ -64,14 +64,14 @@ type Inventory
 scalar join__FieldSet
 
 enum join__Graph {
-  CHECKOUT @join__graph(name: "checkout", url: "http://localhost:4001/checkout/graphql")
-  DISCOVERY @join__graph(name: "discovery", url: "http://localhost:4001/discovery/graphql")
-  INVENTORY @join__graph(name: "inventory", url: "http://localhost:4001/inventory/graphql")
-  ORDERS @join__graph(name: "orders", url: "http://localhost:4001/orders/graphql")
-  PRODUCTS @join__graph(name: "products", url: "http://localhost:4001/products/graphql")
-  REVIEWS @join__graph(name: "reviews", url: "http://localhost:4001/reviews/graphql")
-  SHIPPING @join__graph(name: "shipping", url: "http://localhost:4001/shipping/graphql")
-  USERS @join__graph(name: "users", url: "http://localhost:4001/users/graphql")
+  CHECKOUT @join__graph(name: "checkout", url: "http://host.docker.internal:4001/checkout/graphql")
+  DISCOVERY @join__graph(name: "discovery", url: "http://host.docker.internal:4001/discovery/graphql")
+  INVENTORY @join__graph(name: "inventory", url: "http://host.docker.internal:4001/inventory/graphql")
+  ORDERS @join__graph(name: "orders", url: "http://host.docker.internal:4001/orders/graphql")
+  PRODUCTS @join__graph(name: "products", url: "http://host.docker.internal:4001/products/graphql")
+  REVIEWS @join__graph(name: "reviews", url: "http://host.docker.internal:4001/reviews/graphql")
+  SHIPPING @join__graph(name: "shipping", url: "http://host.docker.internal:4001/shipping/graphql")
+  USERS @join__graph(name: "users", url: "http://host.docker.internal:4001/users/graphql")
 }
 
 scalar link__Import

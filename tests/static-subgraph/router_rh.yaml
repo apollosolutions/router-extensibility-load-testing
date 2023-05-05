@@ -2,4 +2,5 @@ supergraph:
   listen: 0.0.0.0:4040
   path: /
   introspection: true
-rhai: {}
+rhai:
+  scripts: "/dist/config/rhai"

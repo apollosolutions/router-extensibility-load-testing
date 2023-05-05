@@ -1,0 +1,23 @@
+version: "3"
+
+includes:
+  shared:
+    taskfile: ./Shared.yml
+
+tasks:
+  report:
+    dir: tests/jwt-client-awareness/results
+    cmds:
+      - vegeta report results_go.bin > results_go.txt
+  test:
+    cmds:
+      - task: go
+      - task: report
+  go:
+    deps: [shared:setup-go]
+    cmds:
+      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/tests/jwt-client-awareness/router_co.yaml,target=/dist/config/router.yaml"  --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" -m 1g --cpus=.3 ghcr.io/apollographql/router:v1.18.0 -s /dist/config/supergraph.graphql
+      - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration=30s -rate=100 -name=go > tests/jwt-client-awareness/results/results_go.bin
+      - docker stop router
+      - docker rm router
+      - task: shared:cleanup-go

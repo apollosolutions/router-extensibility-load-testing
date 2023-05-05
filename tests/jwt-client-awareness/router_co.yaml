@@ -1,0 +1,10 @@
+supergraph:
+  listen: 0.0.0.0:4040
+  path: /
+  introspection: true
+coprocessor:
+  timeout: 30s
+  url: http://host.docker.internal:8000/client-awareness
+  router:
+    request:
+      headers: true

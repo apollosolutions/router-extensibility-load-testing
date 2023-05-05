@@ -1,6 +1,8 @@
 # basic
 .env
 .DS_Store
+**/*/results/*
+!.gitkeep
 
 # go
 coprocessor

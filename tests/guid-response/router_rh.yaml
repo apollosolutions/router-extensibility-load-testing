@@ -1,0 +1,8 @@
+supergraph:
+  listen: 0.0.0.0:4040
+  path: /
+  introspection: true
+cors:
+  allow_headers: []
+rhai:
+  scripts: "/dist/config/rhai"

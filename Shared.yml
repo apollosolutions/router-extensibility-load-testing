@@ -1,0 +1,12 @@
+version: "3"
+
+tasks:
+  setup-go:
+    dir: coprocessors/go
+    cmds:
+      - docker build . -t go-co
+      - docker run -d --name go-co -m 1g --cpus=.25 -p 8000:8000 go-co
+  cleanup-go:
+    cmds:
+      - docker stop go-co
+      - docker rm go-co

@@ -1,5 +1,0 @@
-{
-  "query": "query User {\n  user {\n    loyaltyPoints\n    id\n    username\n  }\n}\n",
-  "variables": {},
-  "operationName": "User"
-}

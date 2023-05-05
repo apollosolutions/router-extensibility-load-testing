@@ -1,8 +1,30 @@
-version: 3
+version: "3"
 
 dotenv: [".env"]
 
+includes:
+  static:
+    taskfile: ./StaticSubgraph.yml
+  guid:
+    taskfile: "./GUIDResponse.yml"
+  ca:
+    taskfile: "./ClientAwareness.yml"
+
 tasks:
-  default:
+  static-subgraph:
     cmds:
-      - echo "hello world"
+      - task: static:test
+  guid-response:
+    cmds:
+      - task: guid:test
+  client-awareness:
+    cmds:
+      - task: ca:test
+  test-all:
+    aliases:
+      - all
+      - test
+    cmds:
+      - task: static:test
+      - task: guid:test
+      - task: ca:test
