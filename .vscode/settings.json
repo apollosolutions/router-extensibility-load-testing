@@ -1,0 +1,9 @@
+// settings.json
+{
+  "yaml.schemas": {
+    "https://taskfile.dev/schema.json": [
+      "**/Taskfile.yml",
+      "**/Taskfile.*.yml"
+    ]
+  }
+}

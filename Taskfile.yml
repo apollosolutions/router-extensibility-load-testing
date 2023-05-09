@@ -2,29 +2,51 @@ version: "3"
 
 dotenv: [".env"]
 
+vars:
+  RATE: 100
+  DURATION: 30s
+
 includes:
   static:
-    taskfile: ./StaticSubgraph.yml
+    taskfile: ./Taskfile.Test.yml
+    vars:
+      TEST_NAME: "static-subgraph"
   guid:
-    taskfile: "./GUIDResponse.yml"
+    taskfile: "./Taskfile.Test.yml"
+    vars:
+      TEST_NAME: "guid-response"
   ca:
-    taskfile: "./ClientAwareness.yml"
+    taskfile: "./Taskfile.Test.yml"
+    vars:
+      TEST_NAME: "jwt-client-awareness"
 
 tasks:
-  static-subgraph:
+  generate-report:
+    dir: results-generator/
     cmds:
-      - task: static:test
-  guid-response:
+      - npm i
+      - node index.js > results.md
+  static:
     cmds:
-      - task: guid:test
-  client-awareness:
+      - task: static:baseline
+      - task: static:go
+      - task: static:rhai
+      - task: static:config
+  guid:
     cmds:
-      - task: ca:test
+      - task: guid:baseline
+      - task: guid:go
+      - task: guid:rhai
+  awareness:
+    cmds:
+      - task: ca:baseline
+      - task: ca:go
   test-all:
     aliases:
       - all
       - test
     cmds:
-      - task: static:test
-      - task: guid:test
-      - task: ca:test
+      - task: static
+      - task: guid
+      - task: awareness
+      - task: generate-report
