@@ -1,4 +1,4 @@
-version: "3"
+version: 3
 
 tasks:
   setup-go:
@@ -10,3 +10,12 @@ tasks:
     cmds:
       - docker stop go-co
       - docker rm go-co
+  setup-node:
+    dir: coprocessors/node
+    cmds:
+      - docker build . -t node-co
+      - docker run -d --name node-co -m 1g --cpus=.25 -p 8000:8000 node-co
+  cleanup-node:
+    cmds:
+      - docker stop node-co
+      - docker rm node-co

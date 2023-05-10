@@ -7,13 +7,13 @@
 
 ## Overview
 
-This repository is a simple way to test the overhead of the three customization points of the Apollo Router: 
+This repository is a simple way to test the overhead of the three customization points of the Apollo Router:
 
 * [Coprocessors](https://www.apollographql.com/docs/router/customizations/coprocessor)
 * [Rhai](https://www.apollographql.com/docs/router/customizations/rhai)
 * Configuration options
 
-The current tests are: 
+The current tests are:
 
 * Setting a static header to subgraphs (Config, Rhai, Coprocessor)
 * Setting 10 GUID headers on response to clients (Rhai, Coprocessor)
@@ -21,6 +21,7 @@ The current tests are:
 
 The coprocessors are currently written in: 
 * [Go](./coprocessors/go/)
+* [Node](./coprocessors/node)
 
 With more to come.
 
@@ -34,7 +35,6 @@ To help with consistency, there are resource limits for both the router and the 
 
 * The router is configured with .33 CPU cycles and 1GB RAM.
 * Coprocessors are configured with .25 CPU cycles and 1GB RAM. 
-
 
 ### guid-response
 
@@ -65,42 +65,43 @@ To help with consistency, there are resource limits for both the router and the 
 You will need to have installed:
 
 * [Vegeta](https://github.com/tsenart/vegeta)
-* [Task (for Taskfile support)](https://github.com/go-task/task)
-* [A copy of the Retail Supergraph demo and it running](https://github.com/apollosolutions/retail-supergraph)
+* [Task](https://github.com/go-task/task) (for `Taskfile` support)
+* A copy of the [Retail Supergraph demo](https://github.com/apollosolutions/retail-supergraph) running on port 4001
 
-Both can be installed by `brew`.
+_Note: `vegeta` and `go-task` can both can be installed via `brew`._
 
-Next, you'll also need an Apollo Graph Reference and Apollo Key. For the testing, we using a local supergraph (located at `./router/supergraph.graphql`), but [the Coprocessor feature is restricted to enterprise customers only](https://www.apollographql.com/docs/router/customizations/coprocessor). 
+Next, you'll also need an Apollo Graph Reference and Apollo Key. For the testing, we are using a local supergraph (located at `./router/supergraph.graphql`), but [the Coprocessor feature is restricted to enterprise customers only](https://www.apollographql.com/docs/router/customizations/coprocessor).
 
 ## Usage
 
-Once you have the necessary requirements: 
+Once you have the necessary requirements:
 
 * Copy the `.sample_env` file to `.env` and fill in the fields
-* Run `task test-all` to run the available tests within the project. 
+* Run `task test-all` to run the available tests within the project.
 
 ## Contributing
 
 ### Coprocessor
 
 To add new coprocessors, you will need to:
-- Add a new folder in the [coprocessors folder](./coprocessors/)
-- Write the coprocessor to use the three static endpoints. Refer to [the Go implementation for more details](./coprocessors/go/main.go): 
+- Add a new folder to the [coprocessors](./coprocessors/)
+- Write the coprocessor to use the three static endpoints. Refer to [the Go implementation](./coprocessors/go/main.go) for more details:
   - `/static-subgraph`
-  - `guid-response`
-  - `client-awareness`
+  - `/guid-response`
+  - `/client-awareness`
 - Add a Dockerfile to build and host the image
-- Add a new `setup-` and `cleanup-` command within [`Shared.yml`](./Shared.yml)
-- Update the test files [(e.g. ClientAwareness.yml)](./ClientAwareness.yml) to run the new test and report on it
+- Add a new `setup-` and `cleanup-` command within [`Taskfile.Shared.yml`](./Taskfile.Shared.yml)
+- Update the [Taskfile.Test.yml](./Taskfile.Test.yml) to run the new test and report on it
 
 ### Tests
 
-To create new tests: 
+To create new tests:
 
 - Determine what you would like to benchmark against (Rhai, Config, and/or Coprocessors)
-- Implement the test within all coprocessors and related extension points 
+- Implement the test within all coprocessors and related extension points
 - Following the format of the [`static-subgraph`](./tests/static-subgraph/) folder, create a new folder for the test and associated Router configurations
-- Create a new Taskfile, similar to [ClientAwareness.yml](./ClientAwareness.yml)
+- Create a new test setup under `includes` in [Taskfile.yml](./Taskfile.yml) follow the pattern of `includes.static`
+- Create a new test task in [Taskfile.yml](./Taskfile.yml) follow the pattern of `tasks.static`
 
 See current tests for reference.
 
