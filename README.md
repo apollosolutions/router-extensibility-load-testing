@@ -91,7 +91,7 @@ To add new coprocessors, you will need to:
   - `/client-awareness`
 - Add a Dockerfile to build and host the image
 - Add a new `setup-` and `cleanup-` command within [`Taskfile.Shared.yml`](./Taskfile.Shared.yml)
-- Update the [Taskfile.Test.yml](./Taskfile.Test.yml) to run the new test and report on it
+- Update the [Taskfile.Test.yml](./Taskfile.Test.yml) to run the new coprocessor and report on it
 
 ### Tests
 

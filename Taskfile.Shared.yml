@@ -1,11 +1,23 @@
 version: 3
 
 tasks:
+  loadtest:
+    internal: true
+    label: '{{.TASK}}-{{.RESULTS_NAME}}'
+    cmds:
+      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=.3 ghcr.io/apollographql/router:v1.18.0 -s /dist/config/supergraph.graphql
+      - sleep 5
+      - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=config > tests/{{.TEST_NAME}}/results/results_{{.RESULTS_NAME}}.bin
+      - docker stop router
+      - docker rm router
+      - vegeta report tests/{{.TEST_NAME}}/results/results_{{.RESULTS_NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.RESULTS_NAME}}.txt
+      - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_{{.RESULTS_NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.RESULTS_NAME}}.json
+
   setup-go:
     dir: coprocessors/go
     cmds:
       - docker build . -t go-co
-      - docker run -d --name go-co -m 1g --cpus=.25 -p 8000:8000 go-co
+      - docker run -d --name go-co --env PORT="{{.COPROCESSOR_PORT}}" -m 1g --cpus=.25 -p {{.COPROCESSOR_PORT}}:{{.COPROCESSOR_PORT}} go-co
   cleanup-go:
     cmds:
       - docker stop go-co
@@ -14,7 +26,7 @@ tasks:
     dir: coprocessors/node
     cmds:
       - docker build . -t node-co
-      - docker run -d --name node-co -m 1g --cpus=.25 -p 8000:8000 node-co
+      - docker run -d --name node-co --env PORT="{{.COPROCESSOR_PORT}}" -m 1g --cpus=.25 -p {{.COPROCESSOR_PORT}}:{{.COPROCESSOR_PORT}} node-co
   cleanup-node:
     cmds:
       - docker stop node-co
