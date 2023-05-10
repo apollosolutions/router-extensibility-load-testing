@@ -1,0 +1,20 @@
+{
+  "name": "load-test-node-coprocessor",
+  "version": "1.0.0",
+  "description": "Load test a node-based Apollo Router coprocessor",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build:clean; npm run build:compile",
+    "build:clean": "docker rm node-co; docker rmi node-co",
+    "build:compile": "docker build . -t node-co",
+    "logs": "docker logs -fn 50 node-co",
+    "start": "npm run stop; npm run build && docker run -d --name node-co -p 8000:8000 node-co",
+    "stop": "docker stop node-co"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0"
+  }
+}
