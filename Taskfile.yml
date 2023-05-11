@@ -4,8 +4,9 @@ dotenv:
   - .env
 
 vars:
-  RATE: 100
+  COPROCESSOR_PORT: 8000
   DURATION: 30s
+  RATE: 100
 
 includes:
   static:
@@ -20,6 +21,8 @@ includes:
     taskfile: ./Taskfile.Test.yml
     vars:
       TEST_NAME: jwt-client-awareness
+  shared:
+    taskfile: ./Taskfile.Shared.yml
 
 tasks:
   generate-report:
