@@ -1,0 +1,4 @@
+{
+    "title":"Static Subgraph Header",
+    "description": "This tests the overhead of setting a static header to each subgraph request. The header is named `source` with a value matching the extensibility option. This is available via all three extensibility options."
+}

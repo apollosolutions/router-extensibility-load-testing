@@ -1,0 +1,4 @@
+{
+    "title":"GUID Response",
+    "description": "This tests the overhead of setting 10 GUID headers on the response to the client using the `RouterResponse` stage. This is only available via Rhai or a Coprocessor."
+}
