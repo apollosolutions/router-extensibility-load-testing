@@ -1,24 +1,28 @@
-version: "3"
+version: 3
 
-dotenv: [".env"]
+dotenv:
+  - .env
 
 vars:
-  RATE: 100
+  COPROCESSOR_PORT: 8000
   DURATION: 30s
+  RATE: 100
 
 includes:
   static:
     taskfile: ./Taskfile.Test.yml
     vars:
-      TEST_NAME: "static-subgraph"
+      TEST_NAME: static-subgraph
   guid:
-    taskfile: "./Taskfile.Test.yml"
+    taskfile: ./Taskfile.Test.yml
     vars:
-      TEST_NAME: "guid-response"
+      TEST_NAME: guid-response
   ca:
-    taskfile: "./Taskfile.Test.yml"
+    taskfile: ./Taskfile.Test.yml
     vars:
-      TEST_NAME: "jwt-client-awareness"
+      TEST_NAME: jwt-client-awareness
+  shared:
+    taskfile: ./Taskfile.Shared.yml
 
 tasks:
   generate-report:
@@ -30,17 +34,20 @@ tasks:
     cmds:
       - task: static:baseline
       - task: static:go
+      - task: static:node
       - task: static:rhai
       - task: static:config
   guid:
     cmds:
       - task: guid:baseline
       - task: guid:go
+      - task: guid:node
       - task: guid:rhai
   awareness:
     cmds:
       - task: ca:baseline
       - task: ca:go
+      - task: ca:node
   test-all:
     aliases:
       - all

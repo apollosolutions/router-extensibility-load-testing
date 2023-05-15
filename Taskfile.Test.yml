@@ -1,45 +1,45 @@
-version: "3"
+version: 3
 
 includes:
   shared:
     taskfile: ./Taskfile.Shared.yml
+    internal: true
 
 tasks:
   baseline:
     cmds:
-      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/router/router_baseline.yaml,target=/dist/config/router.yaml"  --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" -m 1g --cpus=.3 ghcr.io/apollographql/router:v1.18.0 -s /dist/config/supergraph.graphql
-      - sleep 5
-      - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=config > tests/{{.TEST_NAME}}/results/results_baseline.bin
-      - docker stop router
-      - docker rm router
-      - vegeta report tests/{{.TEST_NAME}}/results/results_baseline.bin >  tests/{{.TEST_NAME}}/results/results_baseline.txt
-      - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_baseline.bin >  tests/{{.TEST_NAME}}/results/results_baseline.json
+      - task: shared:loadtest
+        vars:
+          RESULTS_NAME: baseline
+          ROUTER_CONFIG: router/router_baseline.yaml
   config:
     cmds:
-      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/router_config.yaml,target=/dist/config/router.yaml"  --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" -m 1g --cpus=.3 ghcr.io/apollographql/router:v1.18.0 -s /dist/config/supergraph.graphql
-      - sleep 5
-      - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=config > tests/{{.TEST_NAME}}/results/results_config.bin
-      - docker stop router
-      - docker rm router
-      - vegeta report tests/{{.TEST_NAME}}/results/results_config.bin >  tests/{{.TEST_NAME}}/results/results_config.txt
-      - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_config.bin >  tests/{{.TEST_NAME}}/results/results_config.json
+      - task: shared:loadtest
+        vars:
+          RESULTS_NAME: config
+          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_config.yaml
   go:
-    deps: [shared:setup-go]
     cmds:
-      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/router_co.yaml,target=/dist/config/router.yaml"  --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" -m 1g --cpus=.3 ghcr.io/apollographql/router:v1.18.0 -s /dist/config/supergraph.graphql
-      - sleep 5
-      - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=go > tests/{{.TEST_NAME}}/results/results_go.bin
-      - docker stop router
-      - docker rm router
-      - task: shared:cleanup-go
-      - vegeta report tests/{{.TEST_NAME}}/results/results_go.bin > tests/{{.TEST_NAME}}/results/results_go.txt
-      - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_go.bin > tests/{{.TEST_NAME}}/results/results_go.json
+      - task: shared:setup-go
+      - defer:
+          task: shared:cleanup-go
+      - task: shared:loadtest
+        vars:
+          RESULTS_NAME: go
+          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml
+  node:
+    cmds:
+      - task: shared:setup-node
+      - defer:
+          task: shared:cleanup-node
+      - task: shared:loadtest
+        vars:
+          RESULTS_NAME: node
+          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml
   rhai:
     cmds:
-      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/router_rh.yaml,target=/dist/config/router.yaml"  --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/rhai,target=/dist/config/rhai" -m 1g --cpus=.3 ghcr.io/apollographql/router:v1.18.0 -s /dist/config/supergraph.graphql
-      - sleep 5
-      - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=rhai > tests/{{.TEST_NAME}}/results/results_rhai.bin
-      - docker stop router
-      - docker rm router
-      - vegeta report tests/{{.TEST_NAME}}/results/results_rhai.bin > tests/{{.TEST_NAME}}/results/results_rhai.txt
-      - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_rhai.bin > tests/{{.TEST_NAME}}/results/results_rhai.json
+      - task: shared:loadtest
+        vars:
+          RESULTS_NAME: rhai
+          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_rh.yaml
+          ROUTER_RUN_OPTIONS: --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/rhai,target=/dist/config/rhai"
