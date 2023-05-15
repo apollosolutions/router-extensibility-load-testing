@@ -9,14 +9,12 @@ import (
 	"subgraph-a/graph/model"
 )
 
-func (r *entityResolver) FindUserByID(ctx context.Context, id string) (*model.User, error) {
-	return &model.User{
-		ID:   id,
-		Name: "Tom",
-	}, nil
+// FindLocationByID is the resolver for the findLocationByID field.
+func (r *entityResolver) FindLocationByID(ctx context.Context, id string) (*model.Location, error) {
+	return GetLocationsById(id)
 }
 
-// Entity returns generated.EntityResolver implementation.
+// Entity returns EntityResolver implementation.
 func (r *Resolver) Entity() EntityResolver { return &entityResolver{r} }
 
 type entityResolver struct{ *Resolver }

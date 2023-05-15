@@ -80,21 +80,21 @@ func (ec *executionContext) __resolve_entities(ctx context.Context, representati
 		}()
 
 		switch typeName {
-		case "User":
-			resolverName, err := entityResolverNameForUser(ctx, rep)
+		case "Location":
+			resolverName, err := entityResolverNameForLocation(ctx, rep)
 			if err != nil {
-				return fmt.Errorf(`finding resolver for Entity "User": %w`, err)
+				return fmt.Errorf(`finding resolver for Entity "Location": %w`, err)
 			}
 			switch resolverName {
 
-			case "findUserByID":
+			case "findLocationByID":
 				id0, err := ec.unmarshalNID2string(ctx, rep["id"])
 				if err != nil {
-					return fmt.Errorf(`unmarshalling param 0 for findUserByID(): %w`, err)
+					return fmt.Errorf(`unmarshalling param 0 for findLocationByID(): %w`, err)
 				}
-				entity, err := ec.resolvers.Entity().FindUserByID(ctx, id0)
+				entity, err := ec.resolvers.Entity().FindLocationByID(ctx, id0)
 				if err != nil {
-					return fmt.Errorf(`resolving Entity "User": %w`, err)
+					return fmt.Errorf(`resolving Entity "Location": %w`, err)
 				}
 
 				list[idx[i]] = entity
@@ -169,7 +169,7 @@ func (ec *executionContext) __resolve_entities(ctx context.Context, representati
 	}
 }
 
-func entityResolverNameForUser(ctx context.Context, rep map[string]interface{}) (string, error) {
+func entityResolverNameForLocation(ctx context.Context, rep map[string]interface{}) (string, error) {
 	for {
 		var (
 			m   map[string]interface{}
@@ -181,7 +181,7 @@ func entityResolverNameForUser(ctx context.Context, rep map[string]interface{}) 
 		if _, ok = m["id"]; !ok {
 			break
 		}
-		return "findUserByID", nil
+		return "findLocationByID", nil
 	}
-	return "", fmt.Errorf("%w for User", ErrTypeNotFound)
+	return "", fmt.Errorf("%w for Location", ErrTypeNotFound)
 }
