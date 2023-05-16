@@ -5,8 +5,11 @@ const jwt = require('jsonwebtoken')
 const JWT_SECRET = process.env.JWT_SECRET || 'apollo'
 
 function handleCreateJwt(_req, res) {
-  const token = jwt.sign({ client_name: 'node coprocessor' }, JWT_SECRET)
-  res.json(token)
+  const payload = {
+    client_name: req.data.clientName || 'node coprocessor',
+    client_version: req.data.clientVersion || 1,
+  }
+  res.json({ token: jwt.sign(payload, JWT_SECRET) })
 }
 
 function getRequestPayload(req) {
@@ -18,8 +21,9 @@ function getRequestPayload(req) {
   return payload
 }
 
-function sendUnauthenticated(res) {
+function sendUnauthenticated(res, body) {
   res.json({
+    ...body,
     control: { break: 401 }
   })
 
@@ -28,17 +32,18 @@ function sendUnauthenticated(res) {
 
 function handleClientAwareness(req, res) {
   if (req.body.stage !== 'RouterRequest') {
+    res.json(req.body)
     return
   }
 
   const payload = getRequestPayload(req)
   if (!payload.headers['authentication']) {
-    return sendUnauthenticated(res)
+    return sendUnauthenticated(res, payload)
   }
 
   const token = payload.headers['authentication'][0].split('Bearer ')[1]
   if (!token) {
-    return sendUnauthenticated(res)
+    return sendUnauthenticated(res, payload)
   }
 
   try {
@@ -48,12 +53,13 @@ function handleClientAwareness(req, res) {
 
     res.json(payload)
   } catch {
-    sendUnauthenticated(res)
+    sendUnauthenticated(res, payload)
   }
 }
 
 function handleGuidResponse(req, res) {
   if (req.body.stage !== 'RouterResponse') {
+    res.json(req.body)
     return
   }
 
@@ -69,6 +75,7 @@ function handleGuidResponse(req, res) {
 
 function handleStaticSubgraph(req, res) {
   if (req.body.stage !== 'SubgraphRequest') {
+    res.json(req.body)
     return
   }
 
@@ -79,7 +86,7 @@ function handleStaticSubgraph(req, res) {
   res.json(payload)
 }
 
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 3000
 const app = express()
 app.use(express.json())
 app.post('/create-jwt', handleCreateJwt)
