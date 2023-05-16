@@ -40,6 +40,11 @@ node_modules/
 .yarn/install-state.gz
 .pnp.*
 
+# c#
+
+bin/
+obj/
+
 # rust
 
 debug/
