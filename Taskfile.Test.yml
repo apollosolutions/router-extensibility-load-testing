@@ -10,36 +10,33 @@ tasks:
     cmds:
       - task: shared:loadtest
         vars:
-          RESULTS_NAME: baseline
+          NAME: baseline
           ROUTER_CONFIG: router/router_baseline.yaml
   config:
     cmds:
       - task: shared:loadtest
         vars:
-          RESULTS_NAME: config
+          NAME: config
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_config.yaml
   go:
     cmds:
-      - task: shared:setup-go
-      - defer:
-          task: shared:cleanup-go
-      - task: shared:loadtest
+      - task: shared:loadtest-coprocessor
         vars:
-          RESULTS_NAME: go
-          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml
+          NAME: go
   node:
     cmds:
-      - task: shared:setup-node
-      - defer:
-          task: shared:cleanup-node
-      - task: shared:loadtest
+      - task: shared:loadtest-coprocessor
         vars:
-          RESULTS_NAME: node
-          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml
+          NAME: node
+  csharp:
+    cmds:
+      - task: shared:loadtest-coprocessor
+        vars:
+          NAME: csharp
   rhai:
     cmds:
       - task: shared:loadtest
         vars:
-          RESULTS_NAME: rhai
+          NAME: rhai
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_rh.yaml
           ROUTER_RUN_OPTIONS: --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/rhai,target=/dist/config/rhai"
