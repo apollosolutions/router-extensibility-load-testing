@@ -43,3 +43,16 @@ tasks:
           RESULTS_NAME: rhai
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_rh.yaml
           ROUTER_RUN_OPTIONS: --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/rhai,target=/dist/config/rhai"
+  local-subgraphs:
+    cmds:
+      - task: shared:setup-subgraph-a
+      - defer:
+          task: shared:cleanup-subgraph-a
+      - task: shared:setup-subgraph-b
+      - defer:
+          task: shared:cleanup-subgraph-b
+      - task: shared:loadtest
+        vars:
+          RESULTS_NAME: local
+          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml
+          ROUTER_RUN_OPTIONS: --mount "type=bind,source=$PWD/subgraphs/composed-schmea.graphql,target=/dist/schema/local.graphql"

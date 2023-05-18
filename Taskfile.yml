@@ -21,6 +21,10 @@ includes:
     taskfile: ./Taskfile.Test.yml
     vars:
       TEST_NAME: jwt-client-awareness
+  local:
+    taskfile: ./Taskfile.Test.yml
+    vars:
+      TEST_NAME: local-subgraphs
   shared:
     taskfile: ./Taskfile.Shared.yml
 
@@ -48,6 +52,11 @@ tasks:
       - task: ca:baseline
       - task: ca:go
       - task: ca:node
+  test-local:
+    cmds:
+      - task: local:baseline
+      - task: local:local-subgraphs
+      - task: generate-report
   test-all:
     aliases:
       - all
@@ -56,4 +65,5 @@ tasks:
       - task: static
       - task: guid
       - task: awareness
+      - task: test-local
       - task: generate-report
