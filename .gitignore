@@ -45,6 +45,12 @@ node_modules/
 bin/
 obj/
 
+# java
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
 # rust
 
 debug/
