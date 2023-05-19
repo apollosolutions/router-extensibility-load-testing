@@ -23,6 +23,7 @@ The coprocessors are currently written in:
 * [Go](./coprocessors/go/)
 * [Node](./coprocessors/node)
 * [C#](./coprocessors/csharp)
+* [Java](./coprocessors/java)
 
 With more to come.
 
