@@ -53,10 +53,12 @@ tasks:
       - task: ca:go
       - task: ca:node
   test-local:
+    aliases:
+      - local
     cmds:
-      - task: local:baseline
+      # - task: local:baseline
       - task: local:local-subgraphs
-      - task: generate-report
+      # - task: generate-report
   test-all:
     aliases:
       - all
@@ -65,5 +67,4 @@ tasks:
       - task: static
       - task: guid
       - task: awareness
-      - task: test-local
       - task: generate-report

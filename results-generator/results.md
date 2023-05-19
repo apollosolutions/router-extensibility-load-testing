@@ -24,10 +24,10 @@ This is only available via a coprocessor.
 
 This allows you to not have to connect to the open internet to talk to a subgraph
 
-| Type     | Min    | Mean   | p50    | p90     | p95     | p99     | Max      |
-| -------- | ------ | ------ | ------ | ------- | ------- | ------- | -------- |
-| baseline | 3.39ms | 9.36ms | 5.67ms | 12.36ms | 29.78ms | 80.79ms | 180.05ms |
-| local    | 3.06ms | 5.73ms | 4.66ms | 6.69ms  | 8.18ms  | 30.14ms | 150.60ms |
+| Type     | Min    | Mean   | p50    | p90    | p95    | p99     | Max      |
+| -------- | ------ | ------ | ------ | ------ | ------ | ------- | -------- |
+| baseline | 2.83ms | 6.03ms | 4.28ms | 6.40ms | 7.38ms | 63.91ms | 276.56ms |
+| local    | 2.73ms | 4.85ms | 4.05ms | 6.12ms | 7.45ms | 13.75ms | 148.52ms |
 
 ### Static Subgraph Header
 

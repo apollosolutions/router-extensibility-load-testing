@@ -23,7 +23,7 @@ tasks:
       - docker stop go-co
       - docker rm go-co
   setup-subgraph-a:
-    dir: coprocessors/go
+    dir: subgraphs/subgraph-a
     cmds:
       - docker build . -t sub-a
       - docker run -d --name sub-a -m 1g --cpus=1 -p 8081:8081 sub-a
