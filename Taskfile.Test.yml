@@ -33,6 +33,11 @@ tasks:
       - task: shared:loadtest-coprocessor
         vars:
           NAME: csharp
+  java:
+    cmds:
+      - task: shared:loadtest-coprocessor
+        vars:
+          NAME: java
   rhai:
     cmds:
       - task: shared:loadtest
