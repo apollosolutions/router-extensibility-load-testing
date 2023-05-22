@@ -5,13 +5,13 @@ tasks:
     internal: true
     label: "{{.TASK}}-{{.NAME}}"
     cmds:
-      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:v1.19.0 -s /dist/config/supergraph.graphql
+      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:{{ .ROUTER_TAG|default "v1.19.0"}} -s /dist/config/supergraph.graphql
+      - defer: docker rm router # https://taskfile.dev/usage/#doing-task-cleanup-with-defer; tldr ordering needs to be backwards
+      - defer: docker stop router
       - sleep 2
       - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=config > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin
       - vegeta report tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.txt
       - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.json
-      - defer: docker rm router # https://taskfile.dev/usage/#doing-task-cleanup-with-defer; tldr ordering needs to be backwards
-      - defer: docker stop router
   loadtest-coprocessor:
     internal: true
     label: "{{.TASK}}-{{.NAME}}"
