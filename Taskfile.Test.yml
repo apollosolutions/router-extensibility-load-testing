@@ -51,7 +51,7 @@ tasks:
       - task: shared:setup-subgraph-b
       - defer:
           task: shared:cleanup-subgraph-b
-      - task: shared:loadtest
+      - task: shared:loadtest-local-go
         vars:
           RESULTS_NAME: local
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml

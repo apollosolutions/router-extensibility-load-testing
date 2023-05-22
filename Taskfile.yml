@@ -56,9 +56,9 @@ tasks:
     aliases:
       - local
     cmds:
-      # - task: local:baseline
+      - task: local:baseline
       - task: local:local-subgraphs
-      # - task: generate-report
+      - task: generate-report
   test-all:
     aliases:
       - all
