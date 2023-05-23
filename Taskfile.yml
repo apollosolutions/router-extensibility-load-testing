@@ -39,6 +39,8 @@ tasks:
       - task: static:baseline
       - task: static:go
       - task: static:node
+      - task: static:csharp
+      - task: static:java
       - task: static:rhai
       - task: static:config
   guid:
@@ -46,12 +48,17 @@ tasks:
       - task: guid:baseline
       - task: guid:go
       - task: guid:node
+      - task: guid:csharp
+      - task: guid:java
       - task: guid:rhai
   awareness:
     cmds:
       - task: ca:baseline
       - task: ca:go
       - task: ca:node
+      - task: ca:csharp
+      - task: ca:java
+
   test-local:
     aliases:
       - local

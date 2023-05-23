@@ -22,19 +22,18 @@ The current tests are:
 The coprocessors are currently written in: 
 * [Go](./coprocessors/go/)
 * [Node](./coprocessors/node)
+* [C#](./coprocessors/csharp)
+* [Java](./coprocessors/java)
 
 With more to come.
 
 ## Results
 
-For the below tables, each section corresponds to the related test name. Each type relates to either the baseline (meaning no Router configuration), or the extensibility option. Languages imply a coprocessor. 
+For the below tables, each section corresponds to the related test name. Each type relates to either the baseline (meaning no Router configuration), or the extensibility option. Languages imply a coprocessor.
 
-The tests were run at 100 requests per second for 30 seconds against an Apollo Router version 1.18.0. 
+The tests were run at 100 requests per second for 30 seconds against an Apollo Router version 1.18.0.
 
-To help with consistency, there are resource limits for both the router and the coprocessors when using Docker. 
-
-* The router is configured with .33 CPU cycles and 1GB RAM.
-* Coprocessors are configured with .25 CPU cycles and 1GB RAM. 
+To help with consistency, there are resource limits for both the router and the coprocessors when using Docker--currently 1 CPU core and 1GB of RAM
 
 ### GUID Response
 
@@ -100,8 +99,8 @@ To add new coprocessors, you will need to:
   - `/guid-response`
   - `/client-awareness`
 - Add a Dockerfile to build and host the image
-- Add a new `setup-` and `cleanup-` command within [`Taskfile.Shared.yml`](./Taskfile.Shared.yml)
 - Update the [Taskfile.Test.yml](./Taskfile.Test.yml) to run the new coprocessor and report on it
+- Add coprocessor to test tasks in [Taskfile.yml](./Taskfile.yml) (i.e. under `tasks.static.cmds`)
 
 ### Tests
 

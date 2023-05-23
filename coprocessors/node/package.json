@@ -4,12 +4,11 @@
   "description": "Load test a node-based Apollo Router coprocessor",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build:clean; npm run build:compile",
-    "build:clean": "docker rm node-co; docker rmi node-co",
-    "build:compile": "docker build . -t node-co",
+    "build": "docker build . -t node-co",
     "logs": "docker logs -fn 50 node-co",
-    "start": "npm run stop; npm run build && docker run -d --name node-co -p 8000:8000 node-co",
-    "stop": "docker stop node-co"
+    "start": "npm run stop; npm run build && docker run -d --name node-co --env PORT=8000 -p 8000:8000 node-co",
+    "start:dev": "node .",
+    "stop": "docker stop node-co; docker rm node-co; docker rmi node-co"
   },
   "author": "",
   "license": "MIT",
