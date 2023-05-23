@@ -3,43 +3,53 @@ version: 3
 tasks:
   loadtest:
     internal: true
-    label: '{{.TASK}}-{{.NAME}}'
+    label: "{{.TASK}}-{{.NAME}}"
     cmds:
-      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:v1.18.0 -s /dist/config/supergraph.graphql
-      - sleep 5
+      - docker run -p 4040:4040 -d --name router --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:{{ .ROUTER_TAG|default "v1.19.0"}} -s /dist/config/supergraph.graphql
+      - defer: docker rm router # https://taskfile.dev/usage/#doing-task-cleanup-with-defer; tldr ordering needs to be backwards
+      - defer: docker stop router
+      - sleep 2
       - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=config > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin
-      - docker stop router
-      - docker rm router
       - vegeta report tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.txt
       - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.json
   loadtest-coprocessor:
     internal: true
-    label: '{{.TASK}}-{{.NAME}}'
+    label: "{{.TASK}}-{{.NAME}}"
     cmds:
-      - task: setup-coprocessor
+      - task: build-coprocessor
         vars:
-          NAME: '{{.NAME}}'
+          NAME: "{{.NAME}}"
+      - task: start-coprocessor
+        vars:
+          NAME: "{{.NAME}}"
       - defer:
           task: cleanup-coprocessor
           vars:
-            NAME: '{{.NAME}}'
+            NAME: "{{.NAME}}"
       - task: loadtest
         vars:
-          NAME: '{{.NAME}}'
+          NAME: "{{.NAME}}"
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml
-
-  setup-coprocessor:
-    label: '{{.TASK}}-{{.NAME}}'
+  build-coprocessor:
+    label: "build-{{.NAME}}"
     dir: coprocessors/{{.NAME}}
     cmds:
       - docker build . -t {{.NAME}}-co
+    vars:
+      NAME: "{{.NAME|default .CLI_ARGS}}"
+    sources:
+      - "*.*"
+  start-coprocessor:
+    label: "{{.TASK}}-{{.NAME}}"
+    dir: coprocessors/{{.NAME}}
+    cmds:
       - docker run -d --name {{.NAME}}-co --env PORT="{{.COPROCESSOR_PORT}}" -m 1g --cpus=1 -p {{.COPROCESSOR_PORT}}:{{.COPROCESSOR_PORT}} {{.NAME}}-co
     vars:
-      NAME: '{{.NAME|default .CLI_ARGS}}'
+      NAME: "{{.NAME|default .CLI_ARGS}}"
   cleanup-coprocessor:
-    label: '{{.TASK}}-{{.NAME}}'
+    label: "{{.TASK}}-{{.NAME}}"
     cmds:
       - docker stop {{.NAME}}-co
       - docker rm {{.NAME}}-co
     vars:
-      NAME: '{{.NAME|default .CLI_ARGS}}'
+      NAME: "{{.NAME|default .CLI_ARGS}}"
