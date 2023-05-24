@@ -38,6 +38,11 @@ tasks:
       - task: shared:loadtest-coprocessor
         vars:
           NAME: java
+  python:
+    cmds:
+      - task: shared:loadtest-coprocessor
+        vars:
+          NAME: python
   rhai:
     cmds:
       - task: shared:loadtest
