@@ -1,7 +1,0 @@
-{
-    "query": "query Order($orderId: ID!) {\n  order(id: $orderId) {\n    id\n    buyer {\n      id\n      loyaltyPoints\n      recommendedProducts {\n        id\n      }\n    }\n  }\n}\n",
-    "variables": {
-        "orderId": "order:1"
-    },
-    "operationName": "Order"
-}

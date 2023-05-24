@@ -1,5 +1,0 @@
-{
-  "query": "query SearchVariants {\n  searchVariants {\n    id\n    price\n  }\n}\n",
-  "variables": {},
-  "operationName": "SearchVariants"
-}

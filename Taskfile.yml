@@ -36,6 +36,7 @@ tasks:
       - node index.js > results.md
   static:
     cmds:
+      - task: static:setup-subgraphs
       - task: static:baseline
       - task: static:go
       - task: static:node
@@ -43,29 +44,39 @@ tasks:
       - task: static:java
       - task: static:rhai
       - task: static:config
+      - task: static:cleanup-subgraphs
+
   guid:
     cmds:
+      - task: guid:setup-subgraphs
       - task: guid:baseline
       - task: guid:go
       - task: guid:node
       - task: guid:csharp
       - task: guid:java
       - task: guid:rhai
+      - task: guid:cleanup-subgraphs
+
   awareness:
     cmds:
+      - task: ca:setup-subgraphs
       - task: ca:baseline
       - task: ca:go
       - task: ca:node
       - task: ca:csharp
       - task: ca:java
+      - task: ca:cleanup-subgraphs
 
   test-local:
     aliases:
       - local
     cmds:
+      - task: local:setup-subgraphs
       - task: local:baseline
       - task: local:local-subgraphs
+      - task: local:cleanup-subgraphs
       - task: generate-report
+
   test-all:
     aliases:
       - all
