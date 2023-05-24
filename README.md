@@ -24,8 +24,9 @@ The coprocessors are currently written in:
 * [Node](./coprocessors/node)
 * [C#](./coprocessors/csharp)
 * [Java](./coprocessors/java)
+* [Python](./coprocessors/python)
 
-With more to come.
+With more to come?
 
 ## Results
 
