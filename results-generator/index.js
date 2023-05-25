@@ -5,7 +5,7 @@ import { versions } from "process";
 
 const regex = /results_(.*).json/
 // headers for MD table
-const tableHeaders = ['Type', 'Min', 'Mean', 'p50', 'p90', 'p95', 'p99', 'Max']
+const tableHeaders = ['Type', 'Min (ms)', 'Mean (ms)', 'p50 (ms)', 'p90 (ms)', 'p95 (ms)', 'p99 (ms)', 'Max (ms)']
 let testResults = {}
 
 // get the test results from the directory
@@ -107,9 +107,9 @@ const convertResults = async (testPath, testName) => {
 
 const formatNumber = (number, includePlus = true) => {
     if (!includePlus) {
-        return number + "ms"
+        return number
     }
-    return (number <= 0 ? "" : "+") + number + "ms"
+    return (number <= 0 ? "" : "+") + number
 }
 (async () => {
     await getTestResults()
