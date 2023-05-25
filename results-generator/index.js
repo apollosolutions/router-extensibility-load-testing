@@ -38,7 +38,7 @@ const getTestResults = async () => {
                     if (v.name === 'baseline') {
                         v[w] = formatNumber(v[w], false)
                     } else {
-                        v[w] = `${formatNumber(v[w], false)} (${formatNumber((v[w] - bl[w]).toFixed(2))})`
+                        v[w] = `${formatNumber(v[w], false)}<br>(${formatNumber((v[w] - bl[w]).toFixed(2))})`
                     }
                 })
                 return [v.name, v.min, v.mean, v['50th'], v['90th'], v['95th'], v['99th'], v.max]
