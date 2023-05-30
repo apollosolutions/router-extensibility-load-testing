@@ -1,10 +1,11 @@
 import { markdownTable } from "markdown-table";
 import fs from 'fs'
 import path from 'path'
+import { versions } from "process";
 
 const regex = /results_(.*).json/
 // headers for MD table
-const tableHeaders = ['Type', 'Min', 'Mean', 'p50', 'p90', 'p95', 'p99', 'Max']
+const tableHeaders = ['Type', 'Min (ms)', 'Mean (ms)', 'p50 (ms)', 'p90 (ms)', 'p95 (ms)', 'p99 (ms)', 'Max (ms)']
 let testResults = {}
 
 // get the test results from the directory
@@ -26,8 +27,24 @@ const getTestResults = async () => {
             // check if the title/description exist before using; otherwise just skip and default to the raw name
             tr.title ? console.log(`### ${testResults[test].title}\n`) : console.log(`### ${test}\n`)
             tr.description && console.log(`${testResults[test].description}\n`)
+            // get the baseline metrics
+            let bl = testResults[test]["baseline"]
+            // iterate over the latency buckets and convert them into either formatted text (inc. deltas as needed)
+            let v = testResults[test]["results"].map(v => {
+                Object.keys(v).map(w => {
+                    if (w === 'total' || w === 'name') {
+                        return
+                    }
+                    if (v.name === 'baseline') {
+                        v[w] = formatNumber(v[w], false)
+                    } else {
+                        v[w] = `${formatNumber(v[w], false)}<br>(${formatNumber((v[w] - bl[w]).toFixed(2))})`
+                    }
+                })
+                return [v.name, v.min, v.mean, v['50th'], v['90th'], v['95th'], v['99th'], v.max]
+            })
             // finally log the table
-            console.log(`${markdownTable([tableHeaders].concat(testResults[test]["results"]))}\n`)
+            console.log(`${markdownTable([tableHeaders].concat(v))}\n`)
         }
 
     } catch (error) {
@@ -58,12 +75,19 @@ const convertResults = async (testPath, testName) => {
                 if (!testResults[testName]["results"]) {
                     testResults[testName]["results"] = []
                 }
+
                 // convert the latencies into millisecond vs nanosecond
                 for (let l in latencies) {
-                    latencies[l] = (latencies[l] / 1000000).toFixed(2) + 'ms'
+                    latencies[l] = (latencies[l] / 1000000).toFixed(2)
                 }
                 // then push into the results
-                testResults[testName]["results"].push([name, latencies.min, latencies.mean, latencies['50th'], latencies['90th'], latencies['95th'], latencies['99th'], latencies.max])
+                testResults[testName]["results"].push({ ...latencies, name })
+                if (name === 'baseline') {
+                    if (!testResults[testName]['baseline']) {
+                        testResults[testName]['baseline'] = {}
+                    }
+                    testResults[testName]['baseline'] = { ...latencies, name }
+                }
             }
         }
 
@@ -81,6 +105,13 @@ const convertResults = async (testPath, testName) => {
     }
 }
 
+const formatNumber = (number, includePlus = true) => {
+    if (!includePlus) {
+        return number
+    }
+    return (number <= 0 ? "" : "+") + number
+}
 (async () => {
     await getTestResults()
 })()
+
