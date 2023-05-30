@@ -12,6 +12,7 @@ tasks:
       - cat loadtest/targets.txt | vegeta attack -header 'content-type:application/json' -duration={{.DURATION|default "30s"}} -rate={{.RATE|default 100}} -name=config > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin
       - vegeta report tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.txt
       - vegeta report -type=json tests/{{.TEST_NAME}}/results/results_{{.NAME}}.bin > tests/{{.TEST_NAME}}/results/results_{{.NAME}}.json
+
   loadtest-coprocessor:
     internal: true
     label: "{{.TASK}}-{{.NAME}}"
@@ -52,4 +53,26 @@ tasks:
       - docker stop {{.NAME}}-co
       - docker rm {{.NAME}}-co
     vars:
-      NAME: "{{.NAME|default .CLI_ARGS}}"
+      NAME: '{{.NAME|default .CLI_ARGS}}'
+
+  setup-subgraph-a:
+    dir: subgraphs/subgraph-a
+    cmds:
+      - docker build . -t sub-a
+      - docker run -d --name sub-a -m 1g --cpus=1 -p 8081:8081 sub-a
+
+  cleanup-subgraph-a:
+    cmds:
+      - docker stop sub-a
+      - docker rm sub-a
+
+  setup-subgraph-b:
+    dir: subgraphs/subgraph-b
+    cmds:
+      - docker build . -t sub-b
+      - docker run -d --name sub-b -m 1g --cpus=1 -p 8080:8080 sub-b
+
+  cleanup-subgraph-b:
+    cmds:
+      - docker stop sub-b
+      - docker rm sub-b

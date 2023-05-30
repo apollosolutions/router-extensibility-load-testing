@@ -16,6 +16,7 @@ This tests the overhead of setting 10 GUID headers on the response to the client
 This tests the overhead of validating a JWT, and using the JWT body to set the `apollographql-client-name` and `apollographql-client-version` headers. Those headers are then used for client identification within Apollo Studio.
 This is only available via a coprocessor.
 
+
 | Type     | Min (ms)        | Mean (ms)         | p50 (ms)        | p90 (ms)        | p95 (ms)          | p99 (ms)            | Max (ms)              |
 | -------- | --------------- | ----------------- | --------------- | --------------- | ----------------- | ------------------- | --------------------- |
 | baseline | 1.35            | 4.53              | 3.78            | 6.69            | 7.91              | 18.88               | 76.30                 |

@@ -1,0 +1,8 @@
+supergraph:
+  listen: 0.0.0.0:4040
+  path: /
+  introspection: true
+sandbox:
+  enabled: true
+include_subgraph_errors:
+  all: true
