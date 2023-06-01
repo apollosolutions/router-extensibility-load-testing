@@ -9,22 +9,23 @@
 
 This repository is a simple way to test the overhead of the three customization points of the Apollo Router:
 
-* [Coprocessors](https://www.apollographql.com/docs/router/customizations/coprocessor)
-* [Rhai](https://www.apollographql.com/docs/router/customizations/rhai)
-* Configuration options
+- [Coprocessors](https://www.apollographql.com/docs/router/customizations/coprocessor)
+- [Rhai](https://www.apollographql.com/docs/router/customizations/rhai)
+- Configuration options
 
 The current tests are:
 
-* Setting a static header to subgraphs (Config, Rhai, Coprocessor)
-* Setting 10 GUID headers on response to clients (Rhai, Coprocessor)
-* JWT-based client awareness (Coprocessor)
+- Setting a static header to subgraphs (Config, Rhai, Coprocessor)
+- Setting 10 GUID headers on response to clients (Rhai, Coprocessor)
+- JWT-based client awareness (Coprocessor)
 
-The coprocessors are currently written in: 
-* [Go](./coprocessors/go/)
-* [Node](./coprocessors/node)
-* [C#](./coprocessors/csharp)
-* [Java](./coprocessors/java)
-* [Python](./coprocessors/python)
+The coprocessors are currently written in:
+
+- [Go](./coprocessors/go/)
+- [Node](./coprocessors/node)
+- [C#](./coprocessors/csharp)
+- [Java](./coprocessors/java)
+- [Python](./coprocessors/python)
 
 With more to come?
 
@@ -68,23 +69,22 @@ This is only available via a coprocessor.
 
 This tests the overhead of setting a static header to each subgraph request. The header is named `source` with a value matching the extensibility option. This is available via all three extensibility options.
 
-| Type     | Min (ms)        | Mean (ms)       | p50 (ms)        | p90 (ms)        | p95 (ms)        | p99 (ms)          | Max (ms)          |
-| -------- | --------------- | --------------- | --------------- | --------------- | --------------- | ----------------- | ----------------- |
-| baseline | 2.08            | 4.30            | 4.25            | 5.04            | 5.36            | 6.50              | 28.74             |
-| config   | 1.99<br>(-0.09) | 4.24<br>(-0.06) | 4.20<br>(-0.05) | 5.00<br>(-0.04) | 5.34<br>(-0.02) | 6.14<br>(-0.36)   | 30.11<br>(+1.37)  |
-| csharp   | 3.14<br>(+1.06) | 4.66<br>(+0.36) | 4.51<br>(+0.26) | 5.41<br>(+0.37) | 5.77<br>(+0.41) | 7.17<br>(+0.67)   | 38.30<br>(+9.56)  |
-| go       | 3.07<br>(+0.99) | 4.58<br>(+0.28) | 4.43<br>(+0.18) | 5.45<br>(+0.41) | 5.70<br>(+0.34) | 6.80<br>(+0.30)   | 36.33<br>(+7.59)  |
-| java     | 3.20<br>(+1.12) | 4.94<br>(+0.64) | 4.41<br>(+0.16) | 5.77<br>(+0.73) | 6.44<br>(+1.08) | 16.76<br>(+10.26) | 66.46<br>(+37.72) |
-| node     | 3.31<br>(+1.23) | 4.61<br>(+0.31) | 4.44<br>(+0.19) | 5.50<br>(+0.46) | 5.85<br>(+0.49) | 6.73<br>(+0.23)   | 41.97<br>(+13.23) |
-| python   | 1.69<br>(-0.39) | 4.00<br>(-0.30) | 3.90<br>(-0.35) | 4.63<br>(-0.41) | 5.94<br>(+0.58) | 8.10<br>(+1.60)   | 23.28<br>(-5.46)  |
-| rhai     | 1.99<br>(-0.09) | 4.25<br>(-0.05) | 4.20<br>(-0.05) | 5.07<br>(+0.03) | 5.48<br>(+0.12) | 7.65<br>(+1.15)   | 25.71<br>(-3.03)  |
+| Type     | Min (ms)        | Mean (ms)        | p50 (ms)        | p90 (ms)         | p95 (ms)          | p99 (ms)            | Max (ms)            |
+| -------- | --------------- | ---------------- | --------------- | ---------------- | ----------------- | ------------------- | ------------------- |
+| baseline | 1.31            | 4.85             | 4.05            | 7.30             | 8.55              | 17.51               | 83.64               |
+| config   | 1.36<br>(+0.05) | 4.83<br>(-0.02)  | 4.30<br>(+0.25) | 7.36<br>(+0.06)  | 8.23<br>(-0.32)   | 16.44<br>(-1.07)    | 65.63<br>(-18.01)   |
+| csharp   | 1.97<br>(+0.66) | 7.83<br>(+2.98)  | 6.26<br>(+2.21) | 11.73<br>(+4.43) | 15.04<br>(+6.49)  | 37.98<br>(+20.47)   | 206.87<br>(+123.23) |
+| go       | 1.86<br>(+0.55) | 5.72<br>(+0.87)  | 5.34<br>(+1.29) | 8.43<br>(+1.13)  | 9.58<br>(+1.03)   | 16.22<br>(-1.29)    | 80.92<br>(-2.72)    |
+| java     | 2.15<br>(+0.84) | 14.65<br>(+9.80) | 6.26<br>(+2.21) | 12.12<br>(+4.82) | 19.40<br>(+10.85) | 365.91<br>(+348.40) | 652.42<br>(+568.78) |
+| node     | 2.04<br>(+0.73) | 6.53<br>(+1.68)  | 5.90<br>(+1.85) | 9.86<br>(+2.56)  | 12.63<br>(+4.08)  | 24.27<br>(+6.76)    | 79.73<br>(-3.91)    |
+| rhai     | 1.34<br>(+0.03) | 4.95<br>(+0.10)  | 4.42<br>(+0.37) | 7.40<br>(+0.10)  | 8.20<br>(-0.35)   | 13.81<br>(-3.70)    | 119.59<br>(+35.95)  |
 
 ## Prerequisites
 
 You will need to have installed:
 
-* [Task](https://github.com/go-task/task) (for `Taskfile` support)
-* [Node.js](https://nodejs.org/en) (for generating the report) 
+- [Vegeta](https://github.com/tsenart/vegeta)
+- [Task](https://github.com/go-task/task) (for `Taskfile` support)
 
 _Note: `go-task` can be installed via `brew`._
 
@@ -94,14 +94,15 @@ Next, you'll also need an Apollo Graph Reference and Apollo Key. For the testing
 
 Once you have the necessary requirements:
 
-* Copy the `.sample_env` file to `.env` and fill in the fields
-* Run `task test-all` to run the available tests within the project.
+- Copy the `.sample_env` file to `.env` and fill in the fields
+- Run `task test-all` to run the available tests within the project.
 
 ## Contributing
 
 ### Coprocessor
 
 To add new coprocessors, you will need to:
+
 - Add a new folder to the [coprocessors](./coprocessors/)
 - Write the coprocessor to use the three static endpoints. Refer to [the Go implementation](./coprocessors/go/main.go) for more details:
   - `/static-subgraph`

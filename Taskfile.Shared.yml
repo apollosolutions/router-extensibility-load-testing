@@ -114,4 +114,16 @@ tasks:
     internal: true
     label: "cleanup-subgraph-{{.NAME}}"
     cmds:
-      - docker stop sub-{{.NAME}}
+      - docker stop sub-b
+      - docker rm sub-b
+
+  setup-fixed-subgraph:
+    dir: subgraphs/fixed
+    cmds:
+      - docker build . -t fixed
+      - docker run -d --name fixed -m 1g --cpus=1 -p 8082:8082 fixed
+
+  cleanup-fixed-subgraph:
+    cmds:
+      - docker stop fixed
+      - docker rm fixed
