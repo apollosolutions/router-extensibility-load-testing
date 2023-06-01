@@ -84,8 +84,8 @@ This tests the overhead of setting a static header to each subgraph request. The
 
 You will need to have installed:
 
-* [Vegeta](https://github.com/tsenart/vegeta)
-* [Task](https://github.com/go-task/task) (for `Taskfile` support)
+- [Vegeta](https://github.com/tsenart/vegeta)
+- [Task](https://github.com/go-task/task) (for `Taskfile` support)
 
 _Note: `go-task` can be installed via `brew`._
 
