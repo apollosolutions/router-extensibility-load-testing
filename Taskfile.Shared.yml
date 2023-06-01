@@ -53,7 +53,7 @@ tasks:
       - docker stop {{.NAME}}-co
       - docker rm {{.NAME}}-co
     vars:
-      NAME: '{{.NAME|default .CLI_ARGS}}'
+      NAME: "{{.NAME|default .CLI_ARGS}}"
 
   setup-subgraph-a:
     dir: subgraphs/subgraph-a
@@ -76,3 +76,14 @@ tasks:
     cmds:
       - docker stop sub-b
       - docker rm sub-b
+
+  setup-fixed-subgraph:
+    dir: subgraphs/fixed
+    cmds:
+      - docker build . -t fixed
+      - docker run -d --name fixed -m 1g --cpus=1 -p 8082:8082 fixed
+
+  cleanup-fixed-subgraph:
+    cmds:
+      - docker stop fixed
+      - docker rm fixed

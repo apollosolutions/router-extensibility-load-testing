@@ -9,22 +9,23 @@
 
 This repository is a simple way to test the overhead of the three customization points of the Apollo Router:
 
-* [Coprocessors](https://www.apollographql.com/docs/router/customizations/coprocessor)
-* [Rhai](https://www.apollographql.com/docs/router/customizations/rhai)
-* Configuration options
+- [Coprocessors](https://www.apollographql.com/docs/router/customizations/coprocessor)
+- [Rhai](https://www.apollographql.com/docs/router/customizations/rhai)
+- Configuration options
 
 The current tests are:
 
-* Setting a static header to subgraphs (Config, Rhai, Coprocessor)
-* Setting 10 GUID headers on response to clients (Rhai, Coprocessor)
-* JWT-based client awareness (Coprocessor)
+- Setting a static header to subgraphs (Config, Rhai, Coprocessor)
+- Setting 10 GUID headers on response to clients (Rhai, Coprocessor)
+- JWT-based client awareness (Coprocessor)
 
-The coprocessors are currently written in: 
-* [Go](./coprocessors/go/)
-* [Node](./coprocessors/node)
-* [C#](./coprocessors/csharp)
-* [Java](./coprocessors/java)
-* [Python](./coprocessors/python)
+The coprocessors are currently written in:
+
+- [Go](./coprocessors/go/)
+- [Node](./coprocessors/node)
+- [C#](./coprocessors/csharp)
+- [Java](./coprocessors/java)
+- [Python](./coprocessors/python)
 
 With more to come?
 
@@ -76,14 +77,12 @@ This tests the overhead of setting a static header to each subgraph request. The
 | node     | 2.04<br>(+0.73) | 6.53<br>(+1.68)  | 5.90<br>(+1.85) | 9.86<br>(+2.56)  | 12.63<br>(+4.08)  | 24.27<br>(+6.76)    | 79.73<br>(-3.91)    |
 | rhai     | 1.34<br>(+0.03) | 4.95<br>(+0.10)  | 4.42<br>(+0.37) | 7.40<br>(+0.10)  | 8.20<br>(-0.35)   | 13.81<br>(-3.70)    | 119.59<br>(+35.95)  |
 
-
 ## Prerequisites
 
 You will need to have installed:
 
-* [Vegeta](https://github.com/tsenart/vegeta)
-* [Task](https://github.com/go-task/task) (for `Taskfile` support)
-* A copy of the [Retail Supergraph demo](https://github.com/apollosolutions/retail-supergraph) running on port 4001
+- [Vegeta](https://github.com/tsenart/vegeta)
+- [Task](https://github.com/go-task/task) (for `Taskfile` support)
 
 _Note: `vegeta` and `go-task` can both can be installed via `brew`._
 
@@ -93,14 +92,15 @@ Next, you'll also need an Apollo Graph Reference and Apollo Key. For the testing
 
 Once you have the necessary requirements:
 
-* Copy the `.sample_env` file to `.env` and fill in the fields
-* Run `task test-all` to run the available tests within the project.
+- Copy the `.sample_env` file to `.env` and fill in the fields
+- Run `task test-all` to run the available tests within the project.
 
 ## Contributing
 
 ### Coprocessor
 
 To add new coprocessors, you will need to:
+
 - Add a new folder to the [coprocessors](./coprocessors/)
 - Write the coprocessor to use the three static endpoints. Refer to [the Go implementation](./coprocessors/go/main.go) for more details:
   - `/static-subgraph`

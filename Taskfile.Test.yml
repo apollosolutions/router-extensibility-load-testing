@@ -60,7 +60,9 @@ tasks:
     cmds:
       - task: shared:setup-subgraph-a
       - task: shared:setup-subgraph-b
+      - task: shared:setup-fixed-subgraph
   cleanup-subgraphs:
     cmds:
       - task: shared:cleanup-subgraph-a
       - task: shared:cleanup-subgraph-b
+      - task: shared:cleanup-fixed-subgraph

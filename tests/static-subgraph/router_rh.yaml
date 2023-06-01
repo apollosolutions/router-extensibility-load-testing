@@ -1,6 +1,10 @@
+# yaml-language-server: $schema=../../router.config.json
 supergraph:
   listen: 0.0.0.0:4040
   path: /
   introspection: true
 rhai:
   scripts: "/dist/config/rhai"
+override_subgraph_url:
+  subgraph-a: http://host.docker.internal:8082/
+  subgraph-b: http://host.docker.internal:8082/

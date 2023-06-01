@@ -1,5 +1,5 @@
 {
-  "query": "query {\n  locations {\n    description\n    id\n    overallRating\n    reviewsForLocation {\n      comment\n    }\n  }\n}",
+  "query": "query getAllLocations { locations { description id overallRating reviewsForLocation { comment } } }",
   "variables": {},
   "operationName": "getAllLocations"
 }
