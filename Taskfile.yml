@@ -22,10 +22,6 @@ includes:
     taskfile: ./Taskfile.Test.yml
     vars:
       TEST_NAME: jwt-client-awareness
-  local:
-    taskfile: ./Taskfile.Test.yml
-    vars:
-      TEST_NAME: local-subgraphs
   shared:
     taskfile: ./Taskfile.Shared.yml
 
@@ -37,7 +33,9 @@ tasks:
       - node index.js > results.md
   static:
     cmds:
-      - task: static:setup-subgraphs
+      - task: shared:start-subgraphs
+      - defer:
+          task: shared:cleanup-subgraphs
       - task: static:baseline
       - task: static:go
       - task: static:node
@@ -46,11 +44,12 @@ tasks:
       - task: static:python
       - task: static:rhai
       - task: static:config
-      - task: static:cleanup-subgraphs
 
   guid:
     cmds:
-      - task: guid:setup-subgraphs
+      - task: shared:start-subgraphs
+      - defer:
+          task: shared:cleanup-subgraphs
       - task: guid:baseline
       - task: guid:go
       - task: guid:node
@@ -58,29 +57,19 @@ tasks:
       - task: guid:java
       - task: guid:python
       - task: guid:rhai
-      - task: guid:cleanup-subgraphs
 
   awareness:
     cmds:
-      - task: ca:setup-subgraphs
+      - task: shared:start-subgraphs
+      - defer:
+          task: shared:cleanup-subgraphs
       - task: ca:baseline
       - task: ca:go
       - task: ca:node
       - task: ca:csharp
       - task: ca:java
       - task: ca:python
-      - task: ca:cleanup-subgraphs
 
-  test-local:
-    aliases:
-      - local
-    cmds:
-      - task: local:setup-subgraphs
-      - task: local:baseline
-      - task: local:local-subgraphs
-      - task: local:cleanup-subgraphs
-      - task: generate-report
-  
   test-all:
     aliases:
       - all

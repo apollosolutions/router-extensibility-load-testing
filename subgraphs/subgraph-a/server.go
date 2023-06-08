@@ -1,20 +1,26 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 	"subgraph-a/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 )
 
-const port = "8081"
-
 func main() {
+	port, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		port = 3001
+	}
+
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
 	http.Handle("/query", srv)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Printf("connect to http://localhost:%v/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
 }

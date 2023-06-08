@@ -104,7 +104,7 @@ public class JavaCoprocessorApplication {
     public static void main(String[] args) {
         var port = System.getenv("PORT");
         if (port == null) {
-            port = "8000";
+            port = "3000";
         }
 
         var app = new SpringApplication(JavaCoprocessorApplication.class);
@@ -116,7 +116,6 @@ public class JavaCoprocessorApplication {
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 class CoprocessorControl {
     private Integer breakVal;
-    private Object errors;
 
     CoprocessorControl() {
     }
@@ -125,25 +124,12 @@ class CoprocessorControl {
         this.breakVal = breakVal;
     }
 
-    CoprocessorControl(Integer breakVal, Object errors) {
-        this.breakVal = breakVal;
-        this.errors = errors;
-    }
-
     public Integer getBreak() {
         return this.breakVal;
     }
 
     public void setBreak(Integer breakVal) {
         this.breakVal = breakVal;
-    }
-
-    public Object getErrors() {
-        return this.errors;
-    }
-
-    public void setErrors(Object errors) {
-        this.errors = errors;
     }
 }
 

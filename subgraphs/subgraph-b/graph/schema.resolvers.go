@@ -7,7 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
-	"router-coprocessor-proj/subgraph-b/graph/model"
+	"subgraph-b/graph/model"
 )
 
 // Locations is the resolver for the locations field.

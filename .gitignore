@@ -3,10 +3,11 @@
 .DS_Store
 **/*/results/*
 !.gitkeep
-.task 
+.task
 
 # go
 coprocessor
+subgraph-*/subgraph-*
 *.exe
 *.exe~
 *.dll
