@@ -8,7 +8,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"router-coprocessor-proj/subgraph-b/graph/model"
+	"subgraph-b/graph/model"
 	"strconv"
 	"sync"
 	"sync/atomic"

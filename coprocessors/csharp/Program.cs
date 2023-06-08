@@ -151,8 +151,6 @@ class CoprocessorControl
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? Break { get; set; }
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public dynamic? Errors { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

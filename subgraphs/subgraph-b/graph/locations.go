@@ -1,6 +1,6 @@
 package graph
 
-import "router-coprocessor-proj/subgraph-b/graph/model"
+import "subgraph-b/graph/model"
 
 var location1 = model.Location{
 	ID:          "loc-1",

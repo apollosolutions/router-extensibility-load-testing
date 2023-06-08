@@ -31,6 +31,7 @@ tasks:
         vars:
           NAME: "{{.NAME}}"
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml
+
   build-coprocessor:
     label: "build-{{.NAME}}"
     dir: coprocessors/{{.NAME}}
@@ -53,26 +54,49 @@ tasks:
       - docker stop {{.NAME}}-co
       - docker rm {{.NAME}}-co
     vars:
-      NAME: '{{.NAME|default .CLI_ARGS}}'
+      NAME: "{{.NAME|default .CLI_ARGS}}"
 
-  setup-subgraph-a:
-    dir: subgraphs/subgraph-a
+  start-subgraphs:
     cmds:
-      - docker build . -t sub-a
-      - docker run -d --name sub-a -m 1g --cpus=1 -p 8081:8081 sub-a
+      - task: build-subgraph
+        vars:
+          NAME: a
+      - task: build-subgraph
+        vars:
+          NAME: b
+      - task: start-subgraph
+        vars:
+          NAME: a
+          PORT: 8081
+      - task: start-subgraph
+        vars:
+          NAME: b
+          PORT: 8080
+  cleanup-subgraphs:
+    cmds:
+      - task: cleanup-subgraph
+        vars:
+          NAME: a
+      - task: cleanup-subgraph
+        vars:
+          NAME: b
 
-  cleanup-subgraph-a:
+  build-subgraph:
+    internal: true
+    label: "build-subgraph-{{.NAME}}"
+    dir: subgraphs/subgraph-{{.NAME}}
     cmds:
-      - docker stop sub-a
-      - docker rm sub-a
-
-  setup-subgraph-b:
-    dir: subgraphs/subgraph-b
+      - docker build . -t sub-{{.NAME}}
+    sources:
+      - "*.*"
+  start-subgraph:
+    internal: true
+    label: "start-subgraph-{{.NAME}}"
     cmds:
-      - docker build . -t sub-b
-      - docker run -d --name sub-b -m 1g --cpus=1 -p 8080:8080 sub-b
-
-  cleanup-subgraph-b:
+      - docker run -d --name sub-{{.NAME}} --env PORT="{{.PORT}}" -m 1g --cpus=1 -p {{.PORT}}:{{.PORT}} sub-{{.NAME}}
+  cleanup-subgraph:
+    internal: true
+    label: "cleanup-subgraph-{{.NAME}}"
     cmds:
-      - docker stop sub-b
-      - docker rm sub-b
+      - docker stop sub-{{.NAME}}
+      - docker rm sub-{{.NAME}}
