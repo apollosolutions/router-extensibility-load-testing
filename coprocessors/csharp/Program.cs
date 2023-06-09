@@ -83,8 +83,8 @@ var handleClientAwareness = (CoprocessorRequest request) =>
 
     var claims = token.Claims.ToList();
 
-    payload.Headers["apollographql-client-name"] = new string[] { claims.First(c => c.Type == "client_name")?.Value ?? "coprocessor" };
-    payload.Headers["apollographql-client-version"] = new string[] { claims.First(c => c.Type == "client_version")?.Value ?? "loadtest" };
+    payload.Headers["apollographql-client-name"] = new string[] { claims.FirstOrDefault(c => c.Type == "client_name")?.Value ?? "coprocessor" };
+    payload.Headers["apollographql-client-version"] = new string[] { claims.FirstOrDefault(c => c.Type == "client_version")?.Value ?? "loadtest" };
 
     return payload;
 };
