@@ -32,7 +32,7 @@ With more to come?
 
 For the below tables, each section corresponds to the related test name. Each type relates to either the baseline (meaning no Router configuration), or the extensibility option. Languages imply a coprocessor.
 
-The tests were run at 100 requests per second for 30 seconds against an Apollo Router version 1.19.0.
+The tests were run at 100 requests per second for 60 seconds against an Apollo Router version 1.19.0.
 
 To help with consistency, there are resource limits for both the router and the coprocessors when using Docker--currently 1 CPU core and 1GB of RAM
 
@@ -40,42 +40,44 @@ To help with consistency, there are resource limits for both the router and the 
 
 This tests the overhead of setting 10 GUID headers on the response to the client using the `RouterResponse` stage. This is only available via Rhai or a Coprocessor.
 
-| Type     | Min (ms)        | Mean (ms)        | p50 (ms)        | p90 (ms)         | p95 (ms)         | p99 (ms)            | Max (ms)            |
-| -------- | --------------- | ---------------- | --------------- | ---------------- | ---------------- | ------------------- | ------------------- |
-| baseline | 1.31            | 5.29             | 4.57            | 8.27             | 10.01            | 16.68               | 91.33               |
-| csharp   | 2.05<br>(+0.74) | 6.63<br>(+1.34)  | 4.92<br>(+0.35) | 8.92<br>(+0.65)  | 12.22<br>(+2.21) | 36.09<br>(+19.41)   | 212.01<br>(+120.68) |
-| go       | 1.87<br>(+0.56) | 6.59<br>(+1.30)  | 5.73<br>(+1.16) | 10.22<br>(+1.95) | 12.27<br>(+2.26) | 20.38<br>(+3.70)    | 92.06<br>(+0.73)    |
-| java     | 2.82<br>(+1.51) | 13.37<br>(+8.08) | 4.71<br>(+0.14) | 7.44<br>(-0.83)  | 12.28<br>(+2.27) | 398.98<br>(+382.30) | 692.91<br>(+601.58) |
-| node     | 2.24<br>(+0.93) | 6.92<br>(+1.63)  | 5.44<br>(+0.87) | 10.04<br>(+1.77) | 13.39<br>(+3.38) | 37.34<br>(+20.66)   | 150.21<br>(+58.88)  |
-| rhai     | 1.44<br>(+0.13) | 5.34<br>(+0.05)  | 4.57<br>(0.00)  | 8.32<br>(+0.05)  | 10.29<br>(+0.28) | 19.78<br>(+3.10)    | 89.14<br>(-2.19)    |
+| Type     | Min (ms)        | Mean (ms)       | p50 (ms)        | p90 (ms)        | p95 (ms)        | p99 (ms)        | Max (ms)          |
+| -------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | ----------------- |
+| baseline | 2.11            | 4.25            | 4.21            | 5.00            | 5.39            | 6.84            | 30.34             |
+| csharp   | 2.67<br>(+0.56) | 4.50<br>(+0.25) | 4.47<br>(+0.26) | 5.25<br>(+0.25) | 5.58<br>(+0.19) | 6.89<br>(+0.05) | 40.71<br>(+10.37) |
+| go       | 2.52<br>(+0.41) | 4.62<br>(+0.37) | 4.48<br>(+0.27) | 5.44<br>(+0.44) | 5.95<br>(+0.56) | 7.62<br>(+0.78) | 45.12<br>(+14.78) |
+| java     | 2.74<br>(+0.63) | 4.19<br>(-0.06) | 3.88<br>(-0.33) | 5.03<br>(+0.03) | 5.55<br>(+0.16) | 8.58<br>(+1.74) | 52.14<br>(+21.80) |
+| node     | 2.78<br>(+0.67) | 4.57<br>(+0.32) | 4.48<br>(+0.27) | 5.35<br>(+0.35) | 5.75<br>(+0.36) | 7.59<br>(+0.75) | 38.48<br>(+8.14)  |
+| python   | 2.81<br>(+0.70) | 4.64<br>(+0.39) | 4.58<br>(+0.37) | 5.51<br>(+0.51) | 5.97<br>(+0.58) | 8.07<br>(+1.23) | 28.23<br>(-2.11)  |
+| rhai     | 2.04<br>(-0.07) | 4.32<br>(+0.07) | 4.24<br>(+0.03) | 5.12<br>(+0.12) | 5.58<br>(+0.19) | 7.32<br>(+0.48) | 34.93<br>(+4.59)  |
 
 ### Client Awareness using a JWT
 
 This tests the overhead of validating a JWT, and using the JWT body to set the `apollographql-client-name` and `apollographql-client-version` headers. Those headers are then used for client identification within Apollo Studio.
 This is only available via a coprocessor.
 
-| Type     | Min (ms)        | Mean (ms)         | p50 (ms)        | p90 (ms)        | p95 (ms)          | p99 (ms)            | Max (ms)              |
-| -------- | --------------- | ----------------- | --------------- | --------------- | ----------------- | ------------------- | --------------------- |
-| baseline | 1.35            | 4.53              | 3.78            | 6.69            | 7.91              | 18.88               | 76.30                 |
-| csharp   | 1.49<br>(+0.14) | 5.33<br>(+0.80)   | 3.15<br>(-0.63) | 4.95<br>(-1.74) | 6.29<br>(-1.62)   | 50.87<br>(+31.99)   | 332.08<br>(+255.78)   |
-| go       | 2.01<br>(+0.66) | 5.05<br>(+0.52)   | 4.25<br>(+0.47) | 7.29<br>(+0.60) | 9.34<br>(+1.43)   | 19.33<br>(+0.45)    | 66.79<br>(-9.51)      |
-| java     | 2.52<br>(+1.17) | 33.58<br>(+29.05) | 5.34<br>(+1.56) | 9.56<br>(+2.87) | 35.80<br>(+27.89) | 969.13<br>(+950.25) | 1365.42<br>(+1289.12) |
-| node     | 2.74<br>(+1.39) | 7.02<br>(+2.49)   | 5.78<br>(+2.00) | 9.99<br>(+3.30) | 13.04<br>(+5.13)  | 35.70<br>(+16.82)   | 108.69<br>(+32.39)    |
+| Type     | Min (ms)        | Mean (ms)       | p50 (ms)        | p90 (ms)        | p95 (ms)        | p99 (ms)        | Max (ms)          |
+| -------- | --------------- | --------------- | --------------- | --------------- | --------------- | --------------- | ----------------- |
+| baseline | 2.03            | 4.29            | 4.25            | 5.01            | 5.36            | 6.10            | 31.34             |
+| csharp   | 2.86<br>(+0.83) | 4.51<br>(+0.22) | 4.41<br>(+0.16) | 5.39<br>(+0.38) | 5.78<br>(+0.42) | 7.25<br>(+1.15) | 19.18<br>(-12.16) |
+| go       | 2.44<br>(+0.41) | 4.62<br>(+0.33) | 4.46<br>(+0.21) | 5.54<br>(+0.53) | 6.16<br>(+0.80) | 9.09<br>(+2.99) | 38.66<br>(+7.32)  |
+| java     | 2.95<br>(+0.92) | 4.55<br>(+0.26) | 4.18<br>(-0.07) | 5.51<br>(+0.50) | 6.04<br>(+0.68) | 8.64<br>(+2.54) | 49.45<br>(+18.11) |
+| node     | 3.31<br>(+1.28) | 4.63<br>(+0.34) | 4.52<br>(+0.27) | 5.33<br>(+0.32) | 5.65<br>(+0.29) | 6.44<br>(+0.34) | 35.20<br>(+3.86)  |
+| python   | 2.86<br>(+0.83) | 4.59<br>(+0.30) | 4.53<br>(+0.28) | 5.37<br>(+0.36) | 5.76<br>(+0.40) | 7.57<br>(+1.47) | 36.77<br>(+5.43)  |
 
 ### Static Subgraph Header
 
 This tests the overhead of setting a static header to each subgraph request. The header is named `source` with a value matching the extensibility option. This is available via all three extensibility options.
 
-| Type     | Min (ms)        | Mean (ms)        | p50 (ms)        | p90 (ms)         | p95 (ms)          | p99 (ms)            | Max (ms)            |
-| -------- | --------------- | ---------------- | --------------- | ---------------- | ----------------- | ------------------- | ------------------- |
-| baseline | 1.31            | 4.85             | 4.05            | 7.30             | 8.55              | 17.51               | 83.64               |
-| config   | 1.36<br>(+0.05) | 4.83<br>(-0.02)  | 4.30<br>(+0.25) | 7.36<br>(+0.06)  | 8.23<br>(-0.32)   | 16.44<br>(-1.07)    | 65.63<br>(-18.01)   |
-| csharp   | 1.97<br>(+0.66) | 7.83<br>(+2.98)  | 6.26<br>(+2.21) | 11.73<br>(+4.43) | 15.04<br>(+6.49)  | 37.98<br>(+20.47)   | 206.87<br>(+123.23) |
-| go       | 1.86<br>(+0.55) | 5.72<br>(+0.87)  | 5.34<br>(+1.29) | 8.43<br>(+1.13)  | 9.58<br>(+1.03)   | 16.22<br>(-1.29)    | 80.92<br>(-2.72)    |
-| java     | 2.15<br>(+0.84) | 14.65<br>(+9.80) | 6.26<br>(+2.21) | 12.12<br>(+4.82) | 19.40<br>(+10.85) | 365.91<br>(+348.40) | 652.42<br>(+568.78) |
-| node     | 2.04<br>(+0.73) | 6.53<br>(+1.68)  | 5.90<br>(+1.85) | 9.86<br>(+2.56)  | 12.63<br>(+4.08)  | 24.27<br>(+6.76)    | 79.73<br>(-3.91)    |
-| rhai     | 1.34<br>(+0.03) | 4.95<br>(+0.10)  | 4.42<br>(+0.37) | 7.40<br>(+0.10)  | 8.20<br>(-0.35)   | 13.81<br>(-3.70)    | 119.59<br>(+35.95)  |
-
+| Type     | Min (ms)        | Mean (ms)       | p50 (ms)        | p90 (ms)        | p95 (ms)        | p99 (ms)          | Max (ms)          |
+| -------- | --------------- | --------------- | --------------- | --------------- | --------------- | ----------------- | ----------------- |
+| baseline | 2.08            | 4.30            | 4.25            | 5.04            | 5.36            | 6.50              | 28.74             |
+| config   | 1.99<br>(-0.09) | 4.24<br>(-0.06) | 4.20<br>(-0.05) | 5.00<br>(-0.04) | 5.34<br>(-0.02) | 6.14<br>(-0.36)   | 30.11<br>(+1.37)  |
+| csharp   | 3.14<br>(+1.06) | 4.66<br>(+0.36) | 4.51<br>(+0.26) | 5.41<br>(+0.37) | 5.77<br>(+0.41) | 7.17<br>(+0.67)   | 38.30<br>(+9.56)  |
+| go       | 3.07<br>(+0.99) | 4.58<br>(+0.28) | 4.43<br>(+0.18) | 5.45<br>(+0.41) | 5.70<br>(+0.34) | 6.80<br>(+0.30)   | 36.33<br>(+7.59)  |
+| java     | 3.20<br>(+1.12) | 4.94<br>(+0.64) | 4.41<br>(+0.16) | 5.77<br>(+0.73) | 6.44<br>(+1.08) | 16.76<br>(+10.26) | 66.46<br>(+37.72) |
+| node     | 3.31<br>(+1.23) | 4.61<br>(+0.31) | 4.44<br>(+0.19) | 5.50<br>(+0.46) | 5.85<br>(+0.49) | 6.73<br>(+0.23)   | 41.97<br>(+13.23) |
+| python   | 1.69<br>(-0.39) | 4.00<br>(-0.30) | 3.90<br>(-0.35) | 4.63<br>(-0.41) | 5.94<br>(+0.58) | 8.10<br>(+1.60)   | 23.28<br>(-5.46)  |
+| rhai     | 1.99<br>(-0.09) | 4.25<br>(-0.05) | 4.20<br>(-0.05) | 5.07<br>(+0.03) | 5.48<br>(+0.12) | 7.65<br>(+1.15)   | 25.71<br>(-3.03)  |
 
 ## Prerequisites
 
@@ -83,7 +85,6 @@ You will need to have installed:
 
 * [Vegeta](https://github.com/tsenart/vegeta)
 * [Task](https://github.com/go-task/task) (for `Taskfile` support)
-* A copy of the [Retail Supergraph demo](https://github.com/apollosolutions/retail-supergraph) running on port 4001
 
 _Note: `vegeta` and `go-task` can both can be installed via `brew`._
 
