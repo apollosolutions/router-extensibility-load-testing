@@ -1,7 +1,0 @@
-{
-  "query": "query getLocationById($locationId: ID!) {\n  location(id: $locationId) {\n    description\n    id\n    name\n    overallRating\n    photo\n  }\n}",
-  "variables": {
-    "locationId": "loc-1"
-  },
-  "operationName": "getLocationById"
-}

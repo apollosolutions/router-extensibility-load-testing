@@ -83,10 +83,10 @@ This tests the overhead of setting a static header to each subgraph request. The
 
 You will need to have installed:
 
-* [Vegeta](https://github.com/tsenart/vegeta)
 * [Task](https://github.com/go-task/task) (for `Taskfile` support)
+* [Node.js](https://nodejs.org/en) (for generating the report) 
 
-_Note: `vegeta` and `go-task` can both can be installed via `brew`._
+_Note: `go-task` can be installed via `brew`._
 
 Next, you'll also need an Apollo Graph Reference and Apollo Key. For the testing, we are using a local supergraph (located at `./router/supergraph.graphql`), but [the Coprocessor feature is restricted to enterprise customers only](https://www.apollographql.com/docs/router/customizations/coprocessor).
 
