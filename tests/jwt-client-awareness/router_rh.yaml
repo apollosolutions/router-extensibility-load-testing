@@ -1,0 +1,15 @@
+supergraph:
+  listen: 0.0.0.0:4040
+  path: /
+  introspection: true
+authentication:
+  router:
+    jwt:
+      header_name: Authentication
+      header_value_prefix: Bearer
+      jwks:
+        - url: file:///dist/config/rhai/jwks.json
+authorization:
+  require_authentication: true
+rhai:
+  scripts: /dist/config/rhai
