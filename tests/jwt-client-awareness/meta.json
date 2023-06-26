@@ -1,4 +1,4 @@
 {
-    "title":"Client Awareness using a JWT",
+    "title":"Client Awareness Using a JWT",
     "description": "This tests the overhead of validating a JWT, and using the JWT body to set the `apollographql-client-name` and `apollographql-client-version` headers. Those headers are then used for client identification within Apollo Studio.\nThis is only available via a coprocessor."
 }
