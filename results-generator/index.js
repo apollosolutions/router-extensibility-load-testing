@@ -1,119 +1,136 @@
-import { markdownTable } from "markdown-table";
+import { markdownTable } from 'markdown-table'
 import fs from 'fs'
 import path from 'path'
 
-const regex = /results_(.*).json/
-// headers for MD table
-const tableHeaders = ['Type', 'Min (ms)', 'Mean (ms)', 'p50 (ms)', 'p90 (ms)', 'p95 (ms)', 'p99 (ms)', 'Success Rate']
-let testResults = {}
+const RESULTS_JSON_REGEX = /results_(?<name>.*)\.json$/
 
-// get the test results from the directory
-const getTestResults = async () => {
+// get results from results_*.json files for each test type
+const buildTestResults = async () => {
+  const testsPath = path.join('..', 'tests')
+  const testResults = {}
+
+  const testDirectories = await fs.promises.readdir(testsPath)
+  for (let type of testDirectories) {
+    const testTypePath = path.join(testsPath, type)
+    testResults[type] = await parseResultsForTestType(testTypePath, type)
+  }
+
+  return testResults
+}
+
+// parse the results from the various test type directories
+const parseResultsForTestType = async (testTypePath, altTitle) => {
+  const testType = { baseline: {}, results: [], title: altTitle }
+
+  // check for a meta.json file within the root of the test path to get "prettier" table annotations
+  const metaPath = path.join(testTypePath, 'meta.json')
+  try {
+    const data = await fs.promises.readFile(metaPath)
+    const { description, title } = JSON.parse(data)
+    testType.title = title
+    testType.description = description
+  } catch (err) {
+    console.error(`Metadata for ${altTitle} not found`)
+  }
+
+  // fetch all files within each test's results dir (e.g. ../tests/static-subgraph/results/)
+  const resultsPath = path.join(testTypePath, 'results')
+  try {
+    const files = await fs.promises.readdir(resultsPath)
+    for (let file of files) {
+      const filePath = path.join(resultsPath, file)
+      const { isJson, ...result } = await parseJsonTestResult(filePath)
+
+      // append the results from json files
+      if (isJson) {
+        testType.results.push(result)
+        if (result.name === 'baseline') {
+          testType.baseline = result
+        }
+      }
+    }
+  } catch (err) {
+    console.error(`Results for ${altTitle} not found`)
+  }
+
+  return testType
+}
+
+// get the results from the results_*.json files
+const parseJsonTestResult = async (file) => {
+  let result = { isJson: false }
+
+  // check against the regex with the matching group to get the internal name of the test run
+  const match = file.match(RESULTS_JSON_REGEX)
+  if (!!match?.groups?.name) {
     try {
-        // the script runs relative to invocation, and the taskfile invokes from within this directory- hence the ..
-        let testFolder = '../tests'
-        let files = await fs.promises.readdir(testFolder)
-        for await (let file of files) {
-            let stat = await fs.promises.stat(path.join(testFolder, file))
-            if (stat.isDirectory()) {
-                // convert the results into the format necessary for the markdownTable function
-                await convertResults(path.join(testFolder, file), file)
-            }
-        }
-        // now that we have results, convert into MD and log out to be piped to the results.md file
-        for (let test in testResults) {
-            let tr = testResults[test]
-            // check if the title/description exist before using; otherwise just skip and default to the raw name
-            tr.title ? console.log(`### ${testResults[test].title}\n`) : console.log(`### ${test}\n`)
-            tr.description && console.log(`${testResults[test].description}\n`)
-            // get the baseline metrics
-            let bl = testResults[test]["baseline"]
-            // iterate over the latency buckets and convert them into either formatted text (inc. deltas as needed)
-            let v = testResults[test]["results"].map(v => {
-                Object.keys(v).map(w => {
-                    if (w === 'total' || w === 'name') {
-                        return
-                    }
-                    if (v.name === 'baseline') {
-                        v[w] = formatNumber(v[w], false)
-                    } else if (w === 'success') {
-                        v[w] = `${formatNumber(v[w], false)}`
-                    } else {
-                        v[w] = `${formatNumber(v[w], false)}<br>(${formatNumber((v[w] - bl[w]).toFixed(2))})`
-                    }
-                })
-                return [v.name, v.min, v.mean, v['50th'], v['90th'], v['95th'], v['99th'], v.success]
-            })
-            // finally log the table
-            console.log(`${markdownTable([tableHeaders].concat(v))}\n`)
-        }
+      // read the JSON export from the test task
+      const data = await fs.promises.readFile(file, 'utf-8')
+      const { latencies, success } = JSON.parse(data)
 
-    } catch (error) {
-        console.error(error)
-        return
+      result = { ...latencies, isJson: true, name: match.groups.name, success }
+    } catch (err) {
+      console.error(`Failed to read results file: ${file}`)
     }
+  }
+
+  return result
 }
 
-// get the results from the various test repositories
-const convertResults = async (testPath, testName) => {
-    try {
-        // so within each test folder (e.g. ../tests/static-subgraph/) we fetch all files
-        let files = await fs.promises.readdir(path.join(testPath, 'results'))
-        for await (let file of files) {
-            // then get the results from the 'results' folder within
-            let stat = await fs.promises.stat(path.join(path.join(testPath, 'results'), file))
-            // check against the regex with the matching group to get the internal name of the test
-            if (stat.isFile() && file.match(regex) && file.match(regex).length >= 2) {
-                let name = file.match(regex)[1]
-                let filepath = path.join(path.join(testPath, 'results'), file)
-                // read the JSON export from the taskfile
-                let data = await fs.promises.readFile(filepath, 'utf-8')
-                let { latencies, success } = JSON.parse(data)
-                // pre-populate the keys for first runs to avoid errors
-                if (!testResults[testName]) {
-                    testResults[testName] = {}
-                }
-                if (!testResults[testName]["results"]) {
-                    testResults[testName]["results"] = []
-                }
-                success = `${(success * 100).toFixed(0)}%`
+// convert results into markdown and log to console
+const printResults = (testResults) => {
+  Object.values(testResults).forEach(test => {
+    console.log(`### ${test.title}\n`)
+    test.description && console.log(`${test.description}\n`)
 
-                // convert the latencies into millisecond vs nanosecond
-                for (let l in latencies) {
-                    latencies[l] = (latencies[l] / 1000000).toFixed(2)
-                }
-                // then push into the results
-                testResults[testName]["results"].push({ ...latencies, name, success })
-                if (name === 'baseline') {
-                    if (!testResults[testName]['baseline']) {
-                        testResults[testName]['baseline'] = {}
-                    }
-                    testResults[testName]['baseline'] = { ...latencies, name, success }
-                }
-            }
-        }
+    // iterate over the latency buckets and convert them into formatted text with deltas
+    const tableRows = test.results.map(result => {
+      const isBaseline = result.name === 'baseline'
 
-        // lastly, check for a description.json file within the root of the test path as it is used to provide "prettier" annotations for the tables
-        let descriptionStat = await fs.promises.stat(path.join(testPath, 'description.json'))
-        if (descriptionStat.isFile()) {
-            let json = await fs.promises.readFile(path.join(testPath, 'description.json'))
-            let { title, description } = JSON.parse(json)
-            testResults[testName].title = title
-            testResults[testName].description = description
-        }
-    } catch (error) {
-        console.error(error)
-        return
-    }
+      return [
+        result.name,
+        formatLatency(result.min, test.baseline.min, isBaseline),
+        formatLatency(result.mean, test.baseline.mean, isBaseline),
+        formatLatency(result['50th'], test.baseline['50th'], isBaseline),
+        formatLatency(result['90th'], test.baseline['90th'], isBaseline),
+        formatLatency(result['95th'], test.baseline['95th'], isBaseline),
+        formatLatency(result['99th'], test.baseline['99th'], isBaseline),
+        formatPercentage(result.success),
+      ]
+    })
+
+    // print the table
+    const table = markdownTable([
+      ['Type', 'Min (ms)', 'Mean (ms)', 'p50 (ms)', 'p90 (ms)', 'p95 (ms)', 'p99 (ms)', 'Success Rate'],
+      ...tableRows,
+    ], { align: ['left', 'center', 'center', 'center', 'center', 'center', 'center', 'center'] })
+    console.log(`${table}\n`)
+  })
 }
 
-const formatNumber = (number, includePlus = true) => {
-    if (!includePlus) {
-        return number
-    }
-    return (number <= 0 ? "" : "+") + number
+// format latency values with delta from baseline
+const formatLatency = (value, baseline, isBaseline) => {
+  // convert latency values from nanoseconds to milliseconds
+  let formatted = (value / 1000000).toFixed(2)
+
+  if (!isBaseline) {
+    const delta = (value - baseline) / 1000000
+    formatted = `${formatted}<br>${delta > 0 ? '+' : ''}${delta.toFixed(2)}`
+  }
+
+  return formatted
 }
+
+const formatPercentage = (value) => {
+  return `${(value * 100).toFixed(0)}%`
+}
+
 (async () => {
-    await getTestResults()
+  try {
+    const testResults = await buildTestResults()
+    printResults(testResults)
+  } catch (err) {
+    console.error(err)
+    process.exitCode = 1
+  }
 })()
-
