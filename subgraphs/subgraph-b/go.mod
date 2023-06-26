@@ -1,4 +1,4 @@
-module router-coprocessor-proj/subgraph-b
+module subgraph-b
 
 go 1.20
 

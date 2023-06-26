@@ -59,7 +59,7 @@ var jwtKey = []byte("apollo")
 func main() {
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
-		port = 8000
+		port = 3000
 	}
 
 	http.HandleFunc("/static-subgraph", static_subgraph)

@@ -3,10 +3,12 @@
 .DS_Store
 **/*/results/*
 !.gitkeep
-.task 
+.task
 
 # go
 coprocessor
+subgraph-*/subgraph-*
+loadtester/graphql-loadtest*
 *.exe
 *.exe~
 *.dll

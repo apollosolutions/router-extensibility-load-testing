@@ -9,7 +9,7 @@ JWT_SECRET = environ.get('JWT_SECRET') if environ.get('JWT_SECRET') is not None 
 
 def _get_payload():
     payload = request.get_json(force=True)
-    if (payload.get('headers') == None):
+    if (payload.get('headers') is None):
         payload['headers'] = {}
 
     return payload
@@ -33,8 +33,8 @@ def handle_client_awareness():
 
     try:
         jwtPayload = jwt.decode(token, key=JWT_SECRET, algorithms='HS256')
-        clientName = [jwtPayload['client_name']] if jwtPayload['client_name'] is not None else ['coprocessor']
-        clientVersion = [jwtPayload['client_version']] if jwtPayload['client_version'] is not None else ['loadtest']
+        clientName = [jwtPayload.get('client_name')] if jwtPayload.get('client_name') is not None else ['coprocessor']
+        clientVersion = [jwtPayload.get('client_version')] if jwtPayload.get('client_version') is not None else ['loadtest']
         payload['headers']['apollographql-client-name'] = clientName
         payload['headers']['apollographql-client-version'] = clientVersion
     except jwt.exceptions.InvalidSignatureError:
