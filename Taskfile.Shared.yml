@@ -75,7 +75,7 @@ tasks:
   start-subgraphs:
     dir: subgraphs/fixed
     cmds:
-      - docker build . -t fixed
+      - DOCKER_BUILDKIT=1 docker build . -t fixed
       - docker run -d --name fixed -m 1g --cpus=1 -p 8082:8082 fixed
 
   cleanup-subgraphs:
