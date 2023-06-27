@@ -68,7 +68,7 @@ tasks:
   cleanup-coprocessor:
     label: "{{.TASK}}-{{.NAME}}"
     cmds:
-      - docker stop {{.NAME}}-co
+      - docker stop coprocessor
     vars:
       NAME: "{{.NAME|default .CLI_ARGS}}"
 
