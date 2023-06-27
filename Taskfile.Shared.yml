@@ -73,56 +73,12 @@ tasks:
       NAME: "{{.NAME|default .CLI_ARGS}}"
 
   start-subgraphs:
-    cmds:
-      - task: build-subgraph
-        vars:
-          NAME: a
-      - task: build-subgraph
-        vars:
-          NAME: b
-      - task: start-subgraph
-        vars:
-          NAME: a
-          PORT: 8081
-      - task: start-subgraph
-        vars:
-          NAME: b
-          PORT: 8080
-  cleanup-subgraphs:
-    cmds:
-      - task: cleanup-subgraph
-        vars:
-          NAME: a
-      - task: cleanup-subgraph
-        vars:
-          NAME: b
-
-  build-subgraph:
-    internal: true
-    label: "build-subgraph-{{.NAME}}"
-    dir: subgraphs/subgraph-{{.NAME}}
-    cmds:
-      - docker build . -t sub-{{.NAME}}
-    sources:
-      - "*.*"
-  start-subgraph:
-    internal: true
-    label: "start-subgraph-{{.NAME}}"
-    cmds:
-      - docker run --rm -d --name sub-{{.NAME}} --env PORT="{{.PORT}}" -m 1g --cpus=1 -p {{.PORT}}:{{.PORT}} sub-{{.NAME}}
-  cleanup-subgraph:
-    internal: true
-    label: "cleanup-subgraph-{{.NAME}}"
-    cmds:
-      - docker stop sub-{{.NAME}}
-
-  setup-fixed-subgraph:
     dir: subgraphs/fixed
     cmds:
       - docker build . -t fixed
       - docker run -d --name fixed -m 1g --cpus=1 -p 8082:8082 fixed
 
-  cleanup-fixed-subgraph:
+  cleanup-subgraphs:
     cmds:
       - docker stop fixed
       - docker rm fixed

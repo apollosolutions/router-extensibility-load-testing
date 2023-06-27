@@ -33,18 +33,20 @@ var targets = []vegeta.Target{
 		Method: "POST",
 		URL:    endpoint,
 		Body: []byte(`{
-  "query": "query {\n  locations {\n    description\n    id\n    overallRating\n    reviewsForLocation {\n      comment\n    }\n  }\n}",
-  "variables": {}
+  "query": "query getAllLocations {\n  locations {\n    description\n    id\n    overallRating\n    reviewsForLocation {\n      comment\n    }\n  }\n}",
+  "variables": {},
+  "operationName": "getAllLocations"
 }`),
 		Header: headers,
 	}, {
 		Method: "POST",
 		URL:    endpoint,
 		Body: []byte(`{
-  "query": "query($locationId: ID!) {\n  location(id: $locationId) {\n    description\n    id\n    name\n    overallRating\n    photo\n  }\n}",
+  "query": "query getLocationById($locationId: ID!) {\n  location(id: $locationId) {\n    description\n    id\n    name\n    overallRating\n    photo\n  }\n}",
   "variables": {
     "locationId": "loc-1"
-  }
+  },
+  "operationName": "getLocationById"
 }`),
 		Header: headers,
 	},

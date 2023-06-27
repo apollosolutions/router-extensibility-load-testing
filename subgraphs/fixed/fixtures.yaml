@@ -15,3 +15,14 @@ fixtures:
       {"query":"query getLocationById__subgraph_b__0($locationId:ID!){location(id:$locationId){__typename id description name photo}}","operationName":"getLocationById__subgraph_b__0","variables":{"locationId":"loc-1"}}
     res: |
       {"data":{"location":{"__typename":"Location","id":"loc-1","description":"Surviving is usually extremely difficult, especially when nutrients are scarce and you have to choose between growing or reproducing. One species on this planet has developed a nifty method to prepare for this. Once full matured, this species will split into 2 versions of itself and attached to each other, so it's essentially reproducing. Once those 2 are fully grown, they newly grown version will either detach itself if enough nutrients are available or it becomes a storage unit for the original, if nutrients are scarce. If nutrients continue to be scarce, the original will use slowly consume the nutrients in the new version in the hope that new nutrients become available again and it can repeat the cycle.","name":"The Living Ocean of New Lemuria","photo":"https://res.cloudinary.com/apollographql/image/upload/v1644381344/odyssey/federation-course1/FlyBy%20illustrations/Landscape_4_lkmvlw.png"}}}
+  - req: |
+      {
+        "query": "query getLocationById($locationId: ID!) { location(id: $locationId) { description id name overallRating photo } }",
+        "variables": {
+          "locationId": "loc-1"
+        },
+        "operationName": "getLocationById"
+      }
+    res: |
+      {"data":{"location":{"__typename":"Location","id":"loc-1","description":"Surviving is usually extremely difficult, especially when nutrients are scarce and you have to choose between growing or reproducing. One species on this planet has developed a nifty method to prepare for this. Once full matured, this species will split into 2 versions of itself and attached to each other, so it's essentially reproducing. Once those 2 are fully grown, they newly grown version will either detach itself if enough nutrients are available or it becomes a storage unit for the original, if nutrients are scarce. If nutrients continue to be scarce, the original will use slowly consume the nutrients in the new version in the hope that new nutrients become available again and it can repeat the cycle.","name":"The Living Ocean of New Lemuria","photo":"https://res.cloudinary.com/apollographql/image/upload/v1644381344/odyssey/federation-course1/FlyBy%20illustrations/Landscape_4_lkmvlw.png"}}}
+
