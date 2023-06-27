@@ -11,11 +11,11 @@ jobs:
         uses: arduino/setup-task@v1
       - name: Generate report
         run: task test-all
-      - name: Save report
-        uses: actions/upload-artifact@v3
         env:
           APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
           APOLLO_GRAPH_REF: ${{ secrets.APOLLO_GRAPH_REF }}
+      - name: Save report
+        uses: actions/upload-artifact@v3
         with:
           name: results
           path: results-generator/results.md
