@@ -4,7 +4,6 @@ dotenv:
   - .env
 
 vars:
-  COPROCESSOR_PORT: 8000
   DURATION: 60s
   RATE: 100
   ROUTER_TAG: v1.19.0
@@ -33,6 +32,9 @@ tasks:
       - node index.js > results.md
   static:
     cmds:
+      - task: shared:create-network
+      - defer:
+          task: shared:remove-network
       - task: shared:start-subgraphs
       - defer:
           task: shared:cleanup-subgraphs
@@ -47,6 +49,9 @@ tasks:
 
   guid:
     cmds:
+      - task: shared:create-network
+      - defer:
+          task: shared:remove-network
       - task: shared:start-subgraphs
       - defer:
           task: shared:cleanup-subgraphs
@@ -60,6 +65,9 @@ tasks:
 
   awareness:
     cmds:
+      - task: shared:create-network
+      - defer:
+          task: shared:remove-network
       - task: shared:start-subgraphs
       - defer:
           task: shared:cleanup-subgraphs

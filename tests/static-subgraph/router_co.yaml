@@ -5,7 +5,7 @@ supergraph:
   introspection: true
 coprocessor:
   timeout: 30s
-  url: http://host.docker.internal:8000/static-subgraph
+  url: http://coprocessor:8000/static-subgraph
   subgraph:
     all:
       request:

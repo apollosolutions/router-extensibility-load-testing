@@ -22,7 +22,7 @@ type GQLError struct {
 	Extensions interface{}
 }
 
-var endpoint = "http://localhost:4040"
+var endpoint = "http://router:4040"
 var headers = map[string][]string{
 	"Authentication": {"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjEyMzEyMzEyMzEyMywiY2xpZW50X25hbWUiOiJhcG9sbG8gY29wcm9jZXNzb3IifQ.HucZYEikOmBebtLximNoYLFPbNbBeQA_gRWcSs-dYEI"},
 	"Content-Type":   {"application/json"},
