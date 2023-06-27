@@ -80,8 +80,8 @@ tasks:
 
   cleanup-subgraphs:
     cmds:
-      - docker stop fixed
-      - docker rm fixed
+      - docker stop subgraph
+      - docker rm subgraph
 
   create-network:
     cmds:
