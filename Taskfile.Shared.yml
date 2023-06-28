@@ -73,14 +73,22 @@ tasks:
       NAME: "{{.NAME|default .CLI_ARGS}}"
 
   start-subgraphs:
+    cmds:
+      - task: build-fixed-subgraph
+      - task: start-fixed-subgraph
+  build-fixed-subgraph:
     dir: subgraphs/fixed
     cmds:
-      - DOCKER_BUILDKIT=1 docker build . -t fixed
-      - docker run -d --name subgraph --net=task -m 1g --cpus=1 -p 8082:8082 fixed
+      - docker build . -t fixed
+    sources:
+      - "*.*"
+  start-fixed-subgraph:
+    dir: subgraphs/fixed
+    cmds:
+      - docker run --rm -d --name fixed -p 8082:8082 fixed
 
   cleanup-subgraphs:
     cmds:
-      - docker stop subgraph
       - docker rm subgraph
 
   create-network:
