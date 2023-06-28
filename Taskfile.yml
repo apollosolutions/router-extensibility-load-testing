@@ -39,6 +39,7 @@ tasks:
       - defer:
           task: shared:cleanup-fixed-subgraph
       - task: static:baseline
+      - task: static:rust
       - task: static:go
       - task: static:node
       - task: static:csharp
