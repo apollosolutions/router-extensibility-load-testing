@@ -14,19 +14,19 @@ async fn main() {
         .and(warp::body::bytes())
         .map(move |body: Bytes| {
             let req = String::from_utf8(body.to_vec()).expect("invalid utf8");
-            println!("request: {}", req);
+            // println!("request: {}", req);
 
             let pair = manifest.fixtures.iter().find(|f| f.req == req);
 
             match pair {
                 Some(f) => {
-                    println!("found response");
+                    // println!("found response");
                     Response::builder()
                         .header("content-type", "application/json")
                         .body(f.res.clone())
                 }
                 None => {
-                    println!("no fixture for request: {}", req);
+                    // println!("no fixture for request: {}", req);
                     Response::builder()
                         .header("content-type", "application/json")
                         .body(String::from(

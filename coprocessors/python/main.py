@@ -60,7 +60,7 @@ def handle_static_subgraph():
     if (payload['stage'] != 'SubgraphRequest'):
         return payload
 
-    payload['headers']['source'] = 'coprocessor'
+    payload['headers']['source'] = ['coprocessor']
 
     return payload
 
