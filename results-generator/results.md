@@ -1,40 +1,3 @@
-# Router Extensibility Load Testing
-
-**The code in this repository is experimental and has been provided for reference purposes only. Community feedback is welcome but this project may not be supported in the same way that repositories in the official [Apollo GraphQL GitHub organization](https://github.com/apollographql) are. If you need help you can file an issue on this repository, [contact Apollo](https://www.apollographql.com/contact-sales) to talk to an expert, or create a ticket directly in Apollo Studio.**
-
-> Note: The Apollo Router is made available under the Elastic License v2.0 (ELv2).
-> Read [our licensing page](https://www.apollographql.com/docs/resources/elastic-license-v2-faq/) for more details.
-
-## Overview
-
-This repository is a simple way to test the overhead of the three customization points of the Apollo Router:
-
-- [Coprocessors](https://www.apollographql.com/docs/router/customizations/coprocessor)
-- [Rhai](https://www.apollographql.com/docs/router/customizations/rhai)
-- Configuration options
-
-The current tests are:
-
-- Setting a static header to subgraphs (Config, Rhai, Coprocessor)
-- Setting 10 GUID headers on response to clients (Rhai, Coprocessor)
-- JWT-based client awareness (Coprocessor)
-
-The coprocessors are currently written in:
-
-- [Go](./coprocessors/go/)
-- [Node](./coprocessors/node)
-- [C#](./coprocessors/csharp)
-- [Java](./coprocessors/java)
-- [Python](./coprocessors/python)
-
-## Results
-
-For the below tables, each section corresponds to the related test name. Each type relates to either the baseline (meaning no Router configuration), or the extensibility option. Languages imply a coprocessor.
-
-The tests were run at 100 requests per second for 60 seconds against an Apollo Router version 1.19.0 on a Windows machine using WSL2 with Ubuntu. 
-
-To help with consistency, there are resource limits for both the router and the coprocessors when using Docker--currently 1 CPU core and 1GB of RAM.
-
 ### GUID Response
 
 This tests the overhead of setting 10 GUID headers on the response to the client using the `RouterResponse` stage. This is only available via Rhai or a coprocessor.
@@ -52,7 +15,6 @@ This tests the overhead of setting 10 GUID headers on the response to the client
 ### Client Awareness using a JWT
 
 This tests the overhead of validating a JWT, and using the JWT body to set the `apollographql-client-name` and `apollographql-client-version` headers. Those headers are then used for client identification within Apollo Studio.
-
 This is only available via a coprocessor.
 
 | Type     | Min (ms)        | Mean (ms)       | p50 (ms)        | p90 (ms)        | p95 (ms)        | p99 (ms)        | Max (ms)          |
@@ -78,58 +40,3 @@ This tests the overhead of setting a static header to each subgraph request. The
 | node     | 0.92<br>(+0.44) | 1.13<br>(+0.44) | 1.09<br>(+0.44) | 1.32<br>(+0.44) | 1.40<br>(+0.46) | 1.61<br>(+0.49) | 6.60<br>(+1.88) |
 | python   | 0.60<br>(+0.12) | 0.73<br>(+0.04) | 0.69<br>(+0.04) | 0.86<br>(-0.02) | 0.90<br>(-0.04) | 1.01<br>(-0.11) | 5.08<br>(+0.36) |
 | rhai     | 0.53<br>(+0.05) | 0.72<br>(+0.03) | 0.68<br>(+0.03) | 0.92<br>(+0.04) | 0.98<br>(+0.04) | 1.16<br>(+0.04) | 5.11<br>(+0.39) |
-## Prerequisites
-
-You will need to have installed:
-
-- [Vegeta](https://github.com/tsenart/vegeta)
-- [Task](https://github.com/go-task/task) (for `Taskfile` support)
-
-_Note: `go-task` can be installed via `brew`._
-
-Next, you'll also need an Apollo Graph Reference and Apollo Key. For the testing, we are using a local supergraph (located at `./router/supergraph.graphql`), but [the Coprocessor feature is restricted to enterprise customers only](https://www.apollographql.com/docs/router/customizations/coprocessor).
-
-## Usage
-
-Once you have the necessary requirements:
-
-- Copy the `.sample_env` file to `.env` and fill in the fields
-- Run `task test-all` to run the available tests within the project.
-
-### Note
-
-During the development of this project, it was discovered that running these tests on MacOS may result in inconsistent results. We strongly recommend running these tests on a Windows machine if possible to ensure the results are consistent from run to run. 
-
-## Contributing
-
-### Coprocessor
-
-To add new coprocessors, you will need to:
-
-- Add a new folder to the [coprocessors](./coprocessors/)
-- Write the coprocessor to use the three static endpoints. Refer to [the Go implementation](./coprocessors/go/main.go) for more details:
-  - `/static-subgraph`
-  - `/guid-response`
-  - `/client-awareness`
-- Add a Dockerfile to build and host the image
-- Update the [Taskfile.Test.yml](./Taskfile.Test.yml) to run the new coprocessor and report on it
-- Add coprocessor to test tasks in [Taskfile.yml](./Taskfile.yml) (i.e. under `tasks.static.cmds`)
-
-### Tests
-
-To create new tests:
-
-- Determine what you would like to benchmark against (Rhai, Config, and/or Coprocessors)
-- Implement the test within all coprocessors and related extension points
-- Following the format of the [`static-subgraph`](./tests/static-subgraph/) folder, create a new folder for the test and associated Router configurations
-- Create a new test setup under `includes` in [Taskfile.yml](./Taskfile.yml) follow the pattern of `includes.static`
-- Create a new test task in [Taskfile.yml](./Taskfile.yml) follow the pattern of `tasks.static`
-
-See current tests for reference.
-
-## Licensing
-
-Source code in this repository is covered by the Elastic License 2.0. The
-default throughout the repository is a license under the Elastic License 2.0,
-unless a file header or a license file in a subdirectory specifies another
-license. [See the LICENSE](./LICENSE) for the full license text.
