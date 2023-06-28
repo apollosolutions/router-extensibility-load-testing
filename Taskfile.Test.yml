@@ -55,9 +55,3 @@ tasks:
           NAME: rhai
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_rh.yaml
           ROUTER_RUN_OPTIONS: --mount "type=bind,source=$PWD/tests/{{.TEST_NAME}}/rhai,target=/dist/config/rhai"
-  local-subgraphs:
-    cmds:
-      - task: shared:loadtest
-        vars:
-          RESULTS_NAME: local
-          ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_co.yaml

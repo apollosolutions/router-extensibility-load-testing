@@ -37,7 +37,7 @@ tasks:
           task: shared:remove-network
       - task: shared:start-subgraphs
       - defer:
-          task: shared:cleanup-fixed-subgraph
+          task: shared:cleanup-subgraphs
       - task: static:baseline
       - task: static:rust
       - task: static:go
@@ -55,7 +55,7 @@ tasks:
           task: shared:remove-network
       - task: shared:start-subgraphs
       - defer:
-          task: shared:cleanup-fixed-subgraph
+          task: shared:cleanup-subgraphs
       - task: guid:baseline
       - task: guid:go
       - task: guid:node
@@ -71,7 +71,7 @@ tasks:
           task: shared:remove-network
       - task: shared:start-subgraphs
       - defer:
-          task: shared:cleanup-fixed-subgraph
+          task: shared:cleanup-subgraphs
       - task: ca:baseline
       - task: ca:go
       - task: ca:node
