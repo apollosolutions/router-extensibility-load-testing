@@ -53,7 +53,7 @@ tasks:
     label: "build-{{.NAME}}"
     dir: coprocessors/{{.NAME}}
     cmds:
-      - docker build . -t {{.NAME}}-co
+      - DOCKER_BUILDKIT=1 docker build . -t {{.NAME}}-co
     vars:
       NAME: "{{.NAME|default .CLI_ARGS}}"
     sources:
