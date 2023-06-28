@@ -79,7 +79,7 @@ tasks:
   build-fixed-subgraph:
     dir: subgraphs/fixed
     cmds:
-      - docker build . -t fixed
+      - DOCKER_BUILDKIT=1 docker build . -t fixed
     sources:
       - "*.*"
   start-fixed-subgraph:
