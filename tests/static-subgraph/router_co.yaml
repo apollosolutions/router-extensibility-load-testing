@@ -1,10 +1,11 @@
+# yaml-language-server: $schema=../../router.config.json
 supergraph:
   listen: 0.0.0.0:4040
   path: /
   introspection: true
 coprocessor:
   timeout: 30s
-  url: http://host.docker.internal:8000/static-subgraph
+  url: http://coprocessor:8000/static-subgraph
   subgraph:
     all:
       request:

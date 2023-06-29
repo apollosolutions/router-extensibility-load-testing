@@ -49,12 +49,12 @@ enum join__Graph {
   SUBGRAPH_A
     @join__graph(
       name: "subgraph-a"
-      url: "http://host.docker.internal:8081/query"
+      url: "http://subgraph:8082/"
     )
   SUBGRAPH_B
     @join__graph(
       name: "subgraph-b"
-      url: "http://host.docker.internal:8080/query"
+      url: "http://subgraph:8082/"
     )
 }
 

@@ -14,20 +14,20 @@ tasks:
     label: "{{.TASK}}-{{.NAME}}"
     cmds:
       - task: build-loadtester
-      - docker run -d --name router  --rm  -p 4040:4040 --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:{{.ROUTER_TAG|default "v1.19.0"}} -s /dist/config/supergraph.graphql
+      - docker run -d --name router  --rm  -p 4040:4040 --net=task --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:{{.ROUTER_TAG|default "v1.19.0"}} -s /dist/config/supergraph.graphql
       - defer: docker stop router
       - task: warmup-router
         vars:
           NAME: "{{.NAME}}"
-      - docker run --name gql-loadtest --rm --net=host --mount="type=bind,source=$PWD/tests,target=/workdir/tests" gql-loadtest --out="tests/{{.TEST_NAME}}/results/results_{{.NAME}}.json" -rate={{.RATE|default 100}} -duration={{.DURATION|default "30s"}}
+      - docker run --name gql-loadtest --rm --net=task --mount="type=bind,source=$PWD/tests,target=/workdir/tests" gql-loadtest --out="tests/{{.TEST_NAME}}/results/results_{{.NAME}}.json" -rate={{.RATE|default 100}} -duration={{.DURATION|default "30s"}}
 
   warmup-router:
     internal: true
     label: "{{.TASK}}-{{.NAME}}"
     cmds:
       - sleep 5
-      - curl -X POST http://localhost:4040/ --silent -H '@loadtest/headers.txt' -d '@loadtest/queries/Location.json' > /dev/null
-      - curl -X POST http://localhost:4040/ --silent -H '@loadtest/headers.txt' -d '@loadtest/queries/AllLocations.json' > /dev/null
+      - curl -X POST http://127.0.0.1:4040/ --silent -H '@loadtest/headers.txt' -d '@loadtest/queries/Location.json' > /dev/null
+      - curl -X POST http://127.0.0.1:4040/ --silent -H '@loadtest/headers.txt' -d '@loadtest/queries/AllLocations.json' > /dev/null
       - sleep 2
 
   loadtest-coprocessor:
@@ -62,56 +62,39 @@ tasks:
     label: "{{.TASK}}-{{.NAME}}"
     dir: coprocessors/{{.NAME}}
     cmds:
-      - docker run -d --rm --name {{.NAME}}-co --env PORT="{{.COPROCESSOR_PORT}}" -m 1g --cpus=1 -p {{.COPROCESSOR_PORT}}:{{.COPROCESSOR_PORT}} {{.NAME}}-co
+      - docker run -d --rm --name coprocessor --net=task --env PORT="8000" -p 8000:8000 -m 1g --cpus=1 {{.NAME}}-co
     vars:
       NAME: "{{.NAME|default .CLI_ARGS}}"
   cleanup-coprocessor:
     label: "{{.TASK}}-{{.NAME}}"
     cmds:
-      - docker stop {{.NAME}}-co
+      - docker stop coprocessor
     vars:
       NAME: "{{.NAME|default .CLI_ARGS}}"
 
   start-subgraphs:
     cmds:
-      - task: build-subgraph
-        vars:
-          NAME: a
-      - task: build-subgraph
-        vars:
-          NAME: b
-      - task: start-subgraph
-        vars:
-          NAME: a
-          PORT: 8081
-      - task: start-subgraph
-        vars:
-          NAME: b
-          PORT: 8080
-  cleanup-subgraphs:
+      - task: build-fixed-subgraph
+      - task: start-fixed-subgraph
+  build-fixed-subgraph:
+    dir: subgraphs/fixed
     cmds:
-      - task: cleanup-subgraph
-        vars:
-          NAME: a
-      - task: cleanup-subgraph
-        vars:
-          NAME: b
-
-  build-subgraph:
-    internal: true
-    label: "build-subgraph-{{.NAME}}"
-    dir: subgraphs/subgraph-{{.NAME}}
-    cmds:
-      - docker build . -t sub-{{.NAME}}
+      - DOCKER_BUILDKIT=1 docker build . -t fixed
     sources:
       - "*.*"
-  start-subgraph:
-    internal: true
-    label: "start-subgraph-{{.NAME}}"
+  start-fixed-subgraph:
+    dir: subgraphs/fixed
     cmds:
-      - docker run --rm -d --name sub-{{.NAME}} --env PORT="{{.PORT}}" -m 1g --cpus=1 -p {{.PORT}}:{{.PORT}} sub-{{.NAME}}
-  cleanup-subgraph:
-    internal: true
-    label: "cleanup-subgraph-{{.NAME}}"
+      - docker run --rm -d --name subgraph --net=task -p 8082:8082 fixed
+
+  cleanup-subgraphs:
     cmds:
-      - docker stop sub-{{.NAME}}
+      - docker stop subgraph
+
+  create-network:
+    cmds:
+      - docker network create task
+
+  remove-network:
+    cmds:
+      - docker network rm task
