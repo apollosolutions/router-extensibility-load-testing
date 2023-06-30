@@ -38,7 +38,7 @@ async fn static_subgraph(Json(mut body): Json<Map<String, Value>>) -> Json<Value
 async fn guid_response(Json(mut body): Json<Map<String, Value>>) -> Json<Value> {
     if body
         .get("stage")
-        .and_then(|value| value.as_str())
+        .and_then(Value::as_str)
         .is_some_and(|stage| stage == "RouterResponse")
     {
         body.entry("headers")
@@ -63,15 +63,13 @@ async fn client_awareness(Json(mut body): Json<Map<String, Value>>) -> Json<Valu
         return Json(body.into());
     }
 
-    let token = if let Some(token) = body
+    let Some(token) = body
         .get("headers")
         .and_then(|headers| headers.get("authentication"))
         .and_then(|auth_values| auth_values.get(0))
         .and_then(Value::as_str)
         .and_then(|header| header.strip_prefix("Bearer "))
-    {
-        token
-    } else {
+     else {
         body["control"] = json!({"break": 401});
         return Json(body.into());
     };
