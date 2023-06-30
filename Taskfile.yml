@@ -74,6 +74,7 @@ tasks:
       - defer:
           task: shared:cleanup-subgraphs
       - task: ca:baseline
+      - task: ca:rust
       - task: ca:go
       - task: ca:node
       - task: ca:csharp

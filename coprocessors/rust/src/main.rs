@@ -1,5 +1,7 @@
-use axum::{response::IntoResponse, routing::post, Json, Router, Server};
-use serde_json::{Map, Value};
+use axum::{routing::post, Json, Router, Server};
+use jsonwebtoken::{decode, DecodingKey, Validation};
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Map, Value};
 
 #[tokio::main]
 async fn main() {
@@ -52,6 +54,64 @@ async fn guid_response(Json(mut body): Json<Map<String, Value>>) -> Json<Value> 
     Json(body.into())
 }
 
-async fn client_awareness() -> impl IntoResponse {
-    todo!()
+async fn client_awareness(Json(mut body): Json<Map<String, Value>>) -> Json<Value> {
+    if !body
+        .get("stage")
+        .and_then(Value::as_str)
+        .is_some_and(|stage| stage == "RouterRequest")
+    {
+        return Json(body.into());
+    }
+
+    let token = if let Some(token) = body
+        .get("headers")
+        .and_then(|headers| headers.get("authentication"))
+        .and_then(|auth_values| auth_values.get(0))
+        .and_then(Value::as_str)
+        .and_then(|header| header.strip_prefix("Bearer "))
+    {
+        token
+    } else {
+        body["control"] = json!({"break": 401});
+        return Json(body.into());
+    };
+
+    let claims = if let Ok(data) = decode::<Claims>(
+        token,
+        &DecodingKey::from_secret("apollo".as_ref()),
+        &Validation::default(),
+    ) {
+        data.claims
+    } else {
+        body["control"] = json!({"break": 401});
+        return Json(body.into());
+    };
+    let client_name = claims
+        .client_name
+        .unwrap_or_else(|| "coprocessor".to_string());
+    let client_version = claims
+        .client_version
+        .unwrap_or_else(|| "loadtest".to_string());
+    if let Some(headers) = body
+        .entry("headers")
+        .or_insert_with(|| Value::Object(Map::new()))
+        .as_object_mut()
+    {
+        headers.insert(
+            "apollographql-client-name".to_string(),
+            Value::Array(vec![client_name.into()]),
+        );
+        headers.insert(
+            "apollographql-client-version".to_string(),
+            Value::Array(vec![client_version.into()]),
+        );
+    }
+    Json(body.into())
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Claims {
+    exp: usize,
+    client_name: Option<String>,
+    client_version: Option<String>,
 }
