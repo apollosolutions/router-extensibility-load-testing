@@ -85,11 +85,11 @@ tasks:
   start-fixed-subgraph:
     dir: subgraphs/fixed
     cmds:
-      - docker run --rm -d --name fixed -p 8082:8082 fixed
+      - docker run --rm -d --name subgraph --net=task -p 8082:8082 fixed
 
   cleanup-subgraphs:
     cmds:
-      - docker rm subgraph
+      - docker stop subgraph
 
   create-network:
     cmds:
