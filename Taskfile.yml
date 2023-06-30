@@ -57,6 +57,7 @@ tasks:
       - defer:
           task: shared:cleanup-subgraphs
       - task: guid:baseline
+      - task: guid:rust
       - task: guid:go
       - task: guid:node
       - task: guid:csharp
