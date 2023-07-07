@@ -1,3 +1,5 @@
+use std::{env, net::SocketAddr};
+
 use axum::{routing::post, Json, Router, Server};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
@@ -10,7 +12,10 @@ async fn main() {
         .route("/guid-response", post(guid_response))
         .route("/client-awareness", post(client_awareness));
 
-    Server::bind(&"0.0.0.0:8000".parse().unwrap())
+    let port = env::var("PORT")
+        .map(|port| port.parse().unwrap())
+        .unwrap_or(3000);
+    Server::bind(&SocketAddr::new([0, 0, 0, 0].into(), port))
         .serve(router.into_make_service())
         .await
         .unwrap();
