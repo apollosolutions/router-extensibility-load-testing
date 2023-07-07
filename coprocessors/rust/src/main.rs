@@ -69,7 +69,7 @@ async fn client_awareness(Json(mut body): Json<Map<String, Value>>) -> Json<Valu
         .and_then(|auth_values| auth_values.get(0))
         .and_then(Value::as_str)
         .and_then(|header| header.strip_prefix("Bearer "))
-     else {
+    else {
         body["control"] = json!({"break": 401});
         return Json(body.into());
     };
