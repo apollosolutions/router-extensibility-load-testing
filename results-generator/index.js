@@ -1,11 +1,10 @@
 import { markdownTable } from "markdown-table";
 import fs from 'fs'
 import path from 'path'
-import { versions } from "process";
 
 const regex = /results_(.*).json/
 // headers for MD table
-const tableHeaders = ['Type', 'Min (ms)', 'Mean (ms)', 'p50 (ms)', 'p90 (ms)', 'p95 (ms)', 'p99 (ms)', 'Max (ms)']
+const tableHeaders = ['Type', 'Min (ms)', 'Mean (ms)', 'p50 (ms)', 'p90 (ms)', 'p95 (ms)', 'p99 (ms)', 'Success Rate']
 let testResults = {}
 
 // get the test results from the directory
@@ -37,11 +36,13 @@ const getTestResults = async () => {
                     }
                     if (v.name === 'baseline') {
                         v[w] = formatNumber(v[w], false)
+                    } else if (w === 'success') {
+                        v[w] = `${formatNumber(v[w], false)}`
                     } else {
                         v[w] = `${formatNumber(v[w], false)}<br>(${formatNumber((v[w] - bl[w]).toFixed(2))})`
                     }
                 })
-                return [v.name, v.min, v.mean, v['50th'], v['90th'], v['95th'], v['99th'], v.max]
+                return [v.name, v.min, v.mean, v['50th'], v['90th'], v['95th'], v['99th'], v.success]
             })
             // finally log the table
             console.log(`${markdownTable([tableHeaders].concat(v))}\n`)
@@ -67,7 +68,7 @@ const convertResults = async (testPath, testName) => {
                 let filepath = path.join(path.join(testPath, 'results'), file)
                 // read the JSON export from the taskfile
                 let data = await fs.promises.readFile(filepath, 'utf-8')
-                let { latencies } = JSON.parse(data)
+                let { latencies, success } = JSON.parse(data)
                 // pre-populate the keys for first runs to avoid errors
                 if (!testResults[testName]) {
                     testResults[testName] = {}
@@ -75,18 +76,19 @@ const convertResults = async (testPath, testName) => {
                 if (!testResults[testName]["results"]) {
                     testResults[testName]["results"] = []
                 }
+                success = `${(success * 100).toFixed(0)}%`
 
                 // convert the latencies into millisecond vs nanosecond
                 for (let l in latencies) {
                     latencies[l] = (latencies[l] / 1000000).toFixed(2)
                 }
                 // then push into the results
-                testResults[testName]["results"].push({ ...latencies, name })
+                testResults[testName]["results"].push({ ...latencies, name, success })
                 if (name === 'baseline') {
                     if (!testResults[testName]['baseline']) {
                         testResults[testName]['baseline'] = {}
                     }
-                    testResults[testName]['baseline'] = { ...latencies, name }
+                    testResults[testName]['baseline'] = { ...latencies, name, success }
                 }
             }
         }
