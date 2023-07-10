@@ -39,6 +39,7 @@ tasks:
       - defer:
           task: shared:cleanup-subgraphs
       - task: static:baseline
+      - task: static:rust
       - task: static:go
       - task: static:node
       - task: static:csharp
@@ -56,6 +57,7 @@ tasks:
       - defer:
           task: shared:cleanup-subgraphs
       - task: guid:baseline
+      - task: guid:rust
       - task: guid:go
       - task: guid:node
       - task: guid:csharp
@@ -72,6 +74,7 @@ tasks:
       - defer:
           task: shared:cleanup-subgraphs
       - task: ca:baseline
+      - task: ca:rust
       - task: ca:go
       - task: ca:node
       - task: ca:csharp

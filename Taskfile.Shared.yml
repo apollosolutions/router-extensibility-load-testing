@@ -14,7 +14,7 @@ tasks:
     label: "{{.TASK}}-{{.NAME}}"
     cmds:
       - task: build-loadtester
-      - docker run -d --name router  --rm  -p 4040:4040 --net=task --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:{{.ROUTER_TAG|default "v1.19.0"}} -s /dist/config/supergraph.graphql
+      - docker run -d --name router  --rm  -p 4040:4040 --net=task --env APOLLO_GRAPH_REF="$APOLLO_GRAPH_REF" --env APOLLO_KEY="$APOLLO_KEY" --env COPROCESSOR="http://coprocessor:8000" --mount "type=bind,source=$PWD/{{.ROUTER_CONFIG}},target=/dist/config/router.yaml" --mount "type=bind,source=$PWD/router/supergraph.graphql,target=/dist/config/supergraph.graphql" {{.ROUTER_RUN_OPTIONS}} -m 1g --cpus=1 ghcr.io/apollographql/router:{{.ROUTER_TAG|default "v1.19.0"}} -s /dist/config/supergraph.graphql
       - defer: docker stop router
       - task: warmup-router
         vars:
@@ -53,7 +53,7 @@ tasks:
     label: "build-{{.NAME}}"
     dir: coprocessors/{{.NAME}}
     cmds:
-      - docker build . -t {{.NAME}}-co
+      - DOCKER_BUILDKIT=1 docker build . -t {{.NAME}}-co
     vars:
       NAME: "{{.NAME|default .CLI_ARGS}}"
     sources:

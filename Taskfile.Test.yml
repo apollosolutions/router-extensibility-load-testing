@@ -18,6 +18,11 @@ tasks:
         vars:
           NAME: config
           ROUTER_CONFIG: tests/{{.TEST_NAME}}/router_config.yaml
+  rust:
+    cmds:
+      - task: shared:loadtest-coprocessor
+        vars:
+          NAME: rust
   go:
     cmds:
       - task: shared:loadtest-coprocessor
