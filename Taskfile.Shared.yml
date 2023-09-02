@@ -58,6 +58,7 @@ tasks:
       NAME: "{{.NAME|default .CLI_ARGS}}"
     sources:
       - "*.*"
+      - "src/**/*.*"
   start-coprocessor:
     label: "{{.TASK}}-{{.NAME}}"
     dir: coprocessors/{{.NAME}}
@@ -74,22 +75,17 @@ tasks:
 
   start-subgraphs:
     cmds:
-      - task: build-fixed-subgraph
-      - task: start-fixed-subgraph
-  build-fixed-subgraph:
-    dir: subgraphs/fixed
+      - task: build-subgraphs
+      - docker run --rm -d --name subgraphs --net=task -p 8082:8082 subgraphs
+  build-subgraphs:
+    dir: subgraphs
     cmds:
-      - DOCKER_BUILDKIT=1 docker build . -t fixed
+      - DOCKER_BUILDKIT=1 docker build . -t subgraphs
     sources:
-      - "*.*"
-  start-fixed-subgraph:
-    dir: subgraphs/fixed
-    cmds:
-      - docker run --rm -d --name subgraph --net=task -p 8082:8082 fixed
-
+      - "**/*.*"
   cleanup-subgraphs:
     cmds:
-      - docker stop subgraph
+      - docker stop subgraphs
 
   create-network:
     cmds:
