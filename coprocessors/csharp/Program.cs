@@ -38,13 +38,13 @@ var handleClientAwareness = (CoprocessorRequest request) =>
         return payload;
     }
 
-    if (payload.Headers == null || payload.Headers["authentication"] == null)
+    if (payload.Headers == null || !payload.Headers.ContainsKey("authentication"))
     {
         return sendUnauthenticated(payload);
     }
 
-    var tokenString = payload.Headers["authentication"][0].Split("Bearer ")[1];
-    if (tokenString == null)
+    var tokenString = payload.Headers["authentication"][0].Split("Bearer ").Last();
+    if (tokenString == null || tokenString.StartsWith("Bearer"))
     {
         return sendUnauthenticated(payload);
     }
