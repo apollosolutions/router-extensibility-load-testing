@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken')
 
 const JWT_SECRET = process.env.JWT_SECRET || 'apollo'
 
-function handleCreateJwt(_req, res) {
+function handleCreateJwt(req, res) {
   const payload = {
-    client_name: req.data.clientName || 'node coprocessor',
-    client_version: req.data.clientVersion || 1,
+    client_name: req.body?.clientName || 'node coprocessor',
+    client_version: req.body?.clientVersion || 1,
   }
   res.json({ token: jwt.sign(payload, JWT_SECRET) })
 }

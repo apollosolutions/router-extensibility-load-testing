@@ -1,0 +1,7 @@
+POST http://localhost:4040/
+Content-Type: application/json
+@loadtest/queries/Location.json
+
+POST http://localhost:4040/
+Content-Type: application/json
+@loadtest/queries/AllLocations.json

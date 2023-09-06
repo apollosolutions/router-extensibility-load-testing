@@ -30,6 +30,7 @@ tasks:
     cmds:
       - npm i
       - node index.js > results.md
+
   static:
     cmds:
       - task: shared:create-network
@@ -86,6 +87,7 @@ tasks:
       - all
       - test
     cmds:
+      - task: shared:generate-jwt
       - task: static
       - task: guid
       - task: awareness
