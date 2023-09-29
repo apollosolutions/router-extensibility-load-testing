@@ -1,7 +1,10 @@
-fn supergraph_service(service){
-    service.map_response(|response|{
+fn supergraph_service(service) {
+    service.map_response(|response| {
+        let guids = [];
         for i in 1..=10 {
-            response.headers[`GUID${i}`] = uuid_v4();
+            guids += uuid_v4();
         };
+
+        response.headers["GUID"] = guids;
     });
 }
