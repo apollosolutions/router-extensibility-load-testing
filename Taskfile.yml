@@ -4,7 +4,7 @@ dotenv:
   - .env
 
 vars:
-  DURATION: 5s
+  DURATION: 60s
   RATE: 100
   ROUTER_TAG: v1.35.0
 
