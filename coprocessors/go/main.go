@@ -172,7 +172,7 @@ func client_awareness(w http.ResponseWriter, r *http.Request) {
 
 func unauthorized(payload *CoprocessorJSON) []byte {
 	payload.Control = map[string]interface{}{
-		"Break": 401,
+		"break": 401,
 	}
 	responseBody, err := json.Marshal(&payload)
 	if err != nil {
