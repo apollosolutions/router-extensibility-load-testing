@@ -1,0 +1,7 @@
+name: router-extensibility-load-testing
+description: The repository provides a way to test the overhead of the three
+  customization points of the Apollo Router, including coprocessors, Rhai, and
+  native functionality.
+tags:
+  - Testing
+  - Router
